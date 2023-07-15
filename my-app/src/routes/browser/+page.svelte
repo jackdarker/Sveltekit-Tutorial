@@ -10,16 +10,6 @@
 		<ImageView art="Icon.1_04" />
 		<ImageView art="Icon.1_05" tall />
 		<ImageView art="Icon.1_06" tall />
-		<ImageView
-			art="flandre"
-			tall
-			shrink
-			commission
-			subtitle="Commissioned by Kevin T. · Do not use"
-		/>
-		<ImageView art="ribbons" tall />
-		<ImageView art="asumi" />
-		<ImageView art="doodle" />
 	</div>
 </div>
 <style lang="scss">
