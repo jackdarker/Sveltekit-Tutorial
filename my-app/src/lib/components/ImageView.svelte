@@ -4,12 +4,14 @@
 
 	export let tall = false;
 	export let shrink = false;
-	export let commission = false;
 	export let art = '';
 	export let subtitle = 'Click anywhere to dismiss';
-
+	export let onclick = click;
+	onclick = onclick||click;
 	let clicked = false;
-
+	function click(e){
+		clicked = true;  
+	}
 	function onKeyDown(e) {
 		if (e.key === 'Escape') {
 			clicked = false;
@@ -21,14 +23,15 @@
 	class="card"
 	class:tall
 	class:shrink
-	style="background-image:url(art/{art}.png)"
+	style="background-image:url(art/{art})"
 	aria-label={art}
-	on:click={() => (clicked = true)}
-	on:keypress={() => (clicked = true)}
+	on:click={onclick}
+	on:keypress={onclick}
 />
+<div class="footer">{art}</div>
 
 <svelte:window on:keydown={onKeyDown} />
-
+<!-- this changes windowtitle
 <svelte:head>
 	{#if clicked}
 		<title>afn · {art}</title>
@@ -36,7 +39,7 @@
 		<title>afn</title>
 	{/if}
 </svelte:head>
-
+-->
 {#if clicked === true}
 	<!-- svelte-ignore a11y-no-noninteractive-tabindex -->
 	<div
@@ -48,12 +51,20 @@
 		out:fly={{ y: 50, easing: cubicOut, duration: 300 }}
 	>
 		<h3>{art}</h3>
-		<img src="art/{art}.png" alt={art} />
+		<img src="art/{art}" alt={art} />
 		<h6>{subtitle}</h6>
 	</div>
 {/if}
 
 <style lang="scss">
+	.flex-container {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.footer{
+		justify-self: center;
+	}
 	.card {
 		position: relative;
 		border: none;
@@ -67,7 +78,7 @@
 		cursor: pointer;
 		font-size: 0;
 		user-select: none;
-		background-size: cover;
+		background-size:contain;
 		background-position: center;
 		background-repeat: no-repeat;
 		-webkit-transform: translate3d(0, 0, 1px);
@@ -103,34 +114,17 @@
 		backdrop-filter: blur(12px);
 		-webkit-backdrop-filter: blur(12px);
     }
-		img {
-			max-height: 83vh;
-			height: auto;
-			max-width: 86vw;
-			border-radius: 2vh;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-		}
-	
-	h3,
-	h6 {
-		margin: 1vh;
+	img {
+		max-height: 83vh;
+		height: auto;
+		max-width: 86vw;
+		border-radius: 2vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
-
-	h6 {
-		font-size: 2vh;
-		margin-top: 2vh;
-	}
-
-	h3 {
-		font-size: 3.5vh;
-		font-weight: 500;
-		color: var(--white);
-	}
-
 	.tall {
-		grid-row: span 2 / auto;
+	grid-row: span 2 / auto;
 	}
 
 	@media only screen and (max-width: 1153px) {

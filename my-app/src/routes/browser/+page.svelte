@@ -2,16 +2,6 @@
 	import ImageView from '$lib/components/ImageView.svelte';
 </script>
 
-<div class="grid-container">
-	<div class="grid">
-		<ImageView art="Icon.1_01" />
-		<ImageView art="Icon.1_02" />
-		<ImageView art="Icon.1_03" tall />
-		<ImageView art="Icon.1_04" />
-		<ImageView art="Icon.1_05" tall />
-		<ImageView art="Icon.1_06" tall />
-	</div>
-</div>
 <style lang="scss">
 	.grid {
 		gap: 0.8rem;

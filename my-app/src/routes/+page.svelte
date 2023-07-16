@@ -1,7 +1,7 @@
-<nav>
-	<a href="/">home</a>
-	<a href="/about">about</a>
-</nav>
+<script>
+	import Nav from "$lib/components/Nav.svelte";
+</script>
 
+<Nav />
 <h1>home</h1>
 <p>this is the home page.</p>
