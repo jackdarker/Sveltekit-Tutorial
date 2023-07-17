@@ -23,7 +23,7 @@
 	class="card"
 	class:tall
 	class:shrink
-	style="background-image:url(art/{art})"
+	style="background-image:url(../art/{art})"
 	aria-label={art}
 	on:click={onclick}
 	on:keypress={onclick}

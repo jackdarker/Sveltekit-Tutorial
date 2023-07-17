@@ -1,0 +1,27 @@
+import { error } from '@sveltejs/kit';
+import fetchData from '$lib/data.js';
+
+export async function load({ params }) {
+	//const post = posts.find((post) => post.slug === params.slug);
+    let thumbs; 
+    await fetchData("", params)
+    .then(function (response) {
+        thumbs={};
+        thumbs.path = response.path;
+        thumbs.current_page = response.current_page;
+        thumbs.from = response.from;
+        thumbs.to = response.to;
+        thumbs.total = response.total;
+        thumbs.per_page = response.per_page;
+        thumbs.last_page = response.last_page;
+        thumbs.rows = response.data;
+    })
+    .catch(error => {
+        console.error(error);
+    })
+    .finally(() => { });
+	if (!thumbs) throw error(404);
+	return {
+		thumbs
+	};
+}
