@@ -4,7 +4,8 @@
 
 	export let tall = false;
 	export let shrink = false;
-	export let art = '';
+	export let url = '';
+	export let name='';
 	export let subtitle = 'Click anywhere to dismiss';
 	export let onclick = click;
 	onclick = onclick||click;
@@ -23,12 +24,13 @@
 	class="card"
 	class:tall
 	class:shrink
-	style="background-image:url(../art/{art})"
-	aria-label={art}
+	style="background-image:url({url})"
+	aria-label={url}
+	name={name}
 	on:click={onclick}
 	on:keypress={onclick}
 />
-<div class="footer">{art}</div>
+<div class="footer">{name}</div>
 
 <svelte:window on:keydown={onKeyDown} />
 <!-- this changes windowtitle
@@ -50,8 +52,8 @@
 		in:fly={{ y: 50, easing: quintOut, duration: 750 }}
 		out:fly={{ y: 50, easing: cubicOut, duration: 300 }}
 	>
-		<h3>{art}</h3>
-		<img src="art/{art}" alt={art} />
+		<h3>{name}</h3>
+		<img src="{url}" alt={url} />
 		<h6>{subtitle}</h6>
 	</div>
 {/if}

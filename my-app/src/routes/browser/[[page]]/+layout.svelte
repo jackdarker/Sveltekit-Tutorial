@@ -6,9 +6,10 @@
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
     export let data;
-    let picture="Icon.1_01.png";
+    let picture="..\\art\\Icon.1_01.png",picturename;
     function onthumb(e) {
         picture=e.currentTarget.ariaLabel;
+        picturename = e.currentTarget.name;
     }
     
     async function routeToPage(route) {
@@ -20,9 +21,11 @@
     }
 </script>
 <Layout>
-    <h1>{data.thumbs.current_page}</h1>
     <span slot="sidebar"><Search /></span>
-    <ImageView art={picture}/>
+    <div>
+    <img src={picture} />
+    <p>{picturename}</p>
+    </div>
     <!--{#key $page.url.pathname}-->
     <ThumbsList slot="footer" design="top" onclick={onthumb} data={data} onpage={routeToPage}/>
     <!--{/key}-->

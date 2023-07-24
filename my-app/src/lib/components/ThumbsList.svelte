@@ -40,6 +40,7 @@
         loading = false;
     });*/
         //path = data.path;
+    
         current_page = data.thumbs.current_page;
         from = data.thumbs.from;
         to = data.thumbs.to;
@@ -55,7 +56,7 @@
 
 {#if (design==="bottom")}
     <div class="flex-container">
-    <PaginationNav page={current_page} total={total} shown={5} on:change={(e)=>onpage(e.detail.page)}/> 
+    <PaginationNav bind:page={current_page} total={total} shown={5} on:change={(e)=>onpage(e.detail.page)}/> 
     </div>
 {/if}
 <div class={(design==="vertical"||design==="left"||design==="right")?"grid-vertical":"grid-horizontal"}>
@@ -65,15 +66,16 @@
         
         {#each rows as row, i}
         <div class="card">
-            <ImageView art={row.name} onclick={onclick}/>
+            <ImageView url={row.url} name={row.name} onclick={onclick}/>
         </div>
         {:else}
                 <h5 class="text-center">no results</h5>
         {/each}
 </div>
 {#if (design!=="bottom")}
+<p>{current_page}</p>
     <div class="flex-container">
-    <PaginationNav page={current_page} total={total} shown={5} on:change={(e)=>(onpage(e.detail.page))}/> 
+    <PaginationNav total={total} shown={5} bind:page={current_page} on:change={(e)=>(onpage(e.detail.page))}/> 
     </div>
 {/if}
 

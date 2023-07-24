@@ -1,9 +1,11 @@
 import { error } from '@sveltejs/kit';
 import fetchData from '$lib/data.js';
 
-export async function load({ params }) {
+export async function load(event) {
 	//const post = posts.find((post) => post.slug === params.slug);
-    let thumbs; 
+    let thumbs,params=event.params; 
+    console.log(event.locals.answer);
+    params.page = params.page ?? 1;
     await fetchData("", params)
     .then(function (response) {
         thumbs={};
