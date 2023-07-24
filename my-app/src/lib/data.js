@@ -1,8 +1,10 @@
 
 import {resolve as pathresolve,relative,sep,isAbsolute} from "path";
 import FS from "fs";
-const baseDir = process.cwd()+"\\static\\sub\\"; //base of homepage+subdir
-const imgDir ="./static/art"; //"d:\\public\\_pics"; //whee the files are located
+//const baseDir = process.cwd()+"\\static\\sub\\"; //base of homepage+subdir
+//const imgDir ="./static/art"; //"d:\\public\\_pics"; //where the files are located
+const baseDir = process.cwd();
+const imgDir = pathresolve(baseDir+"\\..\\public\\");;
 let data = [];
 const moods = [
   0x1F60D, // 😍
@@ -16,11 +18,10 @@ const moods = [
 ];
 
 async function processDirectory(path) {
-  let abspath=isAbsolute(path)?path:pathresolve(path);
-  let baseurl=imgDir;//"../art/"; 
+  let baseurl,abspath=isAbsolute(path)?path:pathresolve(path);
   baseurl=relative(baseDir,abspath)+sep;
   baseurl=baseurl.replaceAll("\\","/");//dont use \\ in url
-  console.log(path);
+  //console.log(path);
   data=[];
   // using promise instead of callback-api because easier to make sure files are processed one after another
   let stats = await FS.promises.stat(abspath);
@@ -29,23 +30,10 @@ async function processDirectory(path) {
   for(var i=0; i<files.length;i++) {
       //var data = await FS.promises.readFile(resolve(path,files[i]),'utf8');
       //await onFileRead(files[i],data);
-      console.log(files[i]);
+      //console.log(files[i]);
       data.push({id:(i+1),name:files[i],url:baseurl+files[i]});
-  }
-  console.log(data.length); 
+  } 
 }
-
-
-/*for (let i = 0; i < 150; i++) {
-  const random = Math.floor(Math.random() * moods.length);
-  const pics=["Icon.1_01.png","Icon.1_02.png","Icon.1_03.png","Icon.1_04.png","Icon.1_05.png","Icon.1_06.png","Icon.1_07.png","Icon.1_08.png","Icon.1_09.png"]
-  data.push({
-    id: i + 1,
-    name: pics[i],
-    url: "art\\"+pics[i],
-  });
-}*/
-
 
 export default (path, params = {}) => {
 

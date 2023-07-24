@@ -1,6 +1,3 @@
-<script>
-	import ImageView from '$lib/components/ImageView.svelte';
-</script>
 
 <style lang="scss">
 	.grid {

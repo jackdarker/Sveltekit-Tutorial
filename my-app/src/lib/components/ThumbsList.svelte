@@ -1,4 +1,6 @@
 <script>
+    import { onMount } from 'svelte';
+    import {loadImage} from '$lib/webutils.js';
     import { PaginationNav } from "carbon-components-svelte";
     import ImageView from '$lib/components/ImageView.svelte';
     //import fetchData from '$lib/data.js';
@@ -14,7 +16,7 @@
     let per_page = 1;
     let last_page = 1;
     let total = 0;
-    let loading = true;
+    let loading = true,mounted=false;
     
     function _onpage(page){
         console.log("newpage"+page);
@@ -49,8 +51,14 @@
         last_page = data.thumbs.last_page;
         rows = data.thumbs.rows;
         loading = false;
+        for(var i=0;(mounted && (i<per_page));i++){
+            loadImage('#img'+i,rows[i].url);
+        }
     }
-
+    onMount(()=>{
+        mounted=true;changePage(data);
+        //loadImage('#img0',rows[0].url);//'D:/public/_pics/1496956336.tomatocoup_cuffs_ring.jpg');
+    });
     $: changePage(data);  //(e)=> changePage({page: ev.detail.page})
 </script>
 
@@ -66,7 +74,9 @@
         
         {#each rows as row, i}
         <div class="card">
-            <ImageView url={row.url} name={row.name} onclick={onclick}/>
+            <img id={"img"+i} src="" alt="{row.url}" on:click={onclick}/>
+            <p>{row.name}</p>
+            <!--<ImageView url={row.url} name={row.name} onclick={onclick}/>-->
         </div>
         {:else}
                 <h5 class="text-center">no results</h5>
@@ -100,6 +110,9 @@
         grid-auto-flow: dense;
         padding: 0.5em;
     }
+    .card>img{
+        max-width: 100%;;
+    } 
     .grid-horizontal {
         width:100%;
         display: grid;

@@ -1,15 +1,22 @@
 <script>
+    import { onMount } from 'svelte';
     import Search from '$lib/components/Search.svelte';
     import Layout from '$lib/components/HeaderSidebarMain.svelte';
     import ImageView from '$lib/components/ImageView.svelte';
 	import ThumbsList from "$lib/components/ThumbsList.svelte";
+    import {loadImage} from '$lib/webutils.js';
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
     export let data;
-    let picture="..\\art\\Icon.1_01.png",picturename;
+    let picture="..\\public\\Icon.1_01.png",picturename;
+    onMount(()=>{
+        //loadImage('#img','D:/public/_pics/1496956336.tomatocoup_cuffs_ring.jpg');
+    });
     function onthumb(e) {
-        picture=e.currentTarget.ariaLabel;
-        picturename = e.currentTarget.name;
+        picturename=e.currentTarget.alt; //Todo as img.src="blob:html..." we have to use alt="../public/.." instead
+        loadImage('#img',picturename);
+        //picture=e.currentTarget.ariaLabel;
+        //picturename = e.currentTarget.name;
     }
     
     async function routeToPage(route) {
@@ -23,7 +30,7 @@
 <Layout>
     <span slot="sidebar"><Search /></span>
     <div>
-    <img src={picture} />
+    <img class="medsize" id="img" src="" alt=""/>
     <p>{picturename}</p>
     </div>
     <!--{#key $page.url.pathname}-->
@@ -31,3 +38,11 @@
     <!--{/key}-->
     <slot />
 </Layout>
+
+<style>
+    /*todo switch between fullview and fit-to-screen; how to query size?*/
+.medsize{ 
+    max-width: 40em; 
+    max-height: 40em;
+}
+</style>} 
