@@ -4,7 +4,7 @@ import fetchData from '$lib/data.js';
 export async function load(event) {
 	//const post = posts.find((post) => post.slug === params.slug);
     let thumbs,params=event.params; 
-    console.log(event.locals.answer);
+    //console.log(event.locals.answer);  was created in hook.handle
     params.page = params.page ?? 1;
     await fetchData("", params)
     .then(function (response) {

@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount,afterUpdate } from 'svelte';
     import {loadImage} from '$lib/webutils.js';
     import { PaginationNav } from "carbon-components-svelte";
     import ImageView from '$lib/components/ImageView.svelte';
@@ -22,7 +22,7 @@
         console.log("newpage"+page);
     }
     function changePage(data) {
-    loading = true;
+        loading = true;
 
     /*fetchData(path, params)
     .then(function (response) {
@@ -52,14 +52,21 @@
         rows = data.thumbs.rows;
         loading = false;
         for(var i=0;(mounted && (i<per_page));i++){
-            loadImage('#img'+i,rows[i].url);
+            let row=rows[i];
+            if(row && !row.isDir){ //Todo placeholderimg for dirs
+                loadImage('#img'+i,rows[i].url);
+            }
         }
     }
+    afterUpdate(() => {
+        //hack: when navigating from a page with 4 items to page with 5 items, the 5. item is not shown
+        //because changePage was triggered before all 5 <img> nodes where created. 
+		changePage(data);
+	});
     onMount(()=>{
-        mounted=true;changePage(data);
-        //loadImage('#img0',rows[0].url);//'D:/public/_pics/1496956336.tomatocoup_cuffs_ring.jpg');
+      mounted=true;//changePage(data);
     });
-    $: changePage(data);  //(e)=> changePage({page: ev.detail.page})
+    $: changePage(data);
 </script>
 
 {#if (design==="bottom")}
@@ -74,7 +81,7 @@
         
         {#each rows as row, i}
         <div class="card">
-            <img id={"img"+i} src="" alt="{row.url}" on:click={onclick}/>
+            <img id={"img"+i} src="" alt="{row.url}" on:click={row.isDir?null:onclick}/>
             <p>{row.name}</p>
             <!--<ImageView url={row.url} name={row.name} onclick={onclick}/>-->
         </div>

@@ -45,4 +45,4 @@
     max-width: 40em; 
     max-height: 40em;
 }
-</style>} 
+</style>

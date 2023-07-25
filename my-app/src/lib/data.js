@@ -4,18 +4,9 @@ import FS from "fs";
 //const baseDir = process.cwd()+"\\static\\sub\\"; //base of homepage+subdir
 //const imgDir ="./static/art"; //"d:\\public\\_pics"; //where the files are located
 const baseDir = process.cwd();
-const imgDir = pathresolve(baseDir+"\\..\\public\\");;
+const imgDir = pathresolve(baseDir+"\\..\\public\\"); //Todo
 let data = [];
-const moods = [
-  0x1F60D, // 😍
-  0x1F60A, // 😊
-  0x1F603, // 😃
-  0x1F60F, // 😏
-  0x1F620, // 😠
-  0x1F632, // 😲
-  0x1F615, // 😕
-  0x1F622 // 😢 
-];
+
 
 async function processDirectory(path) {
   let baseurl,abspath=isAbsolute(path)?path:pathresolve(path);
@@ -26,12 +17,14 @@ async function processDirectory(path) {
   // using promise instead of callback-api because easier to make sure files are processed one after another
   let stats = await FS.promises.stat(abspath);
   if(!stats.isDirectory()) {throw new Error('not a directory: '+abspath);}
-  let files = await FS.promises.readdir(abspath);
-  for(var i=0; i<files.length;i++) {
+  let entrys = await FS.promises.readdir(abspath,{withFileTypes:true});
+  for(var i=0; i<entrys.length;i++) {
+    let isDir=false,entry=entrys[i];
+    if(entry.isDirectory())isDir=true;
       //var data = await FS.promises.readFile(resolve(path,files[i]),'utf8');
       //await onFileRead(files[i],data);
       //console.log(files[i]);
-      data.push({id:(i+1),name:files[i],url:baseurl+files[i]});
+    data.push({id:(i+1),name:entry.name,url:baseurl+entry.name,isDir:isDir});
   } 
 }
 
@@ -45,14 +38,13 @@ export default (path, params = {}) => {
   let slice=[];
 
   return new Promise((resolve, reject) => {
-    //baseDir+sep+"static"+sep+"art" "./static/art"
     processDirectory(imgDir).then(
       ()=>{  total = data.length;
         last_page = Math.ceil(total / per_page);
         from = (page - 1) * per_page;
         to = page * per_page;
         slice = data.slice(from, to);
-        console.log(slice.length);
+        //console.log(slice.length);
         resolve({
           'total': total,
           'per_page': per_page,
@@ -63,7 +55,7 @@ export default (path, params = {}) => {
           'data': slice
         });
       })
-    console.log(data.length); 
+    //console.log(data.length); 
     /*setTimeout(function () {
       console.log(slice.length); 
       resolve({
