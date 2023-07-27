@@ -1,4 +1,5 @@
 <div class="wrapper">
+    <div class="header2"><slot name="header2" /></div>
     <div class="header"><slot name="header" /></div>
     <div class="sidebar"><slot name="sidebar" /></div>
     <div class="content"><slot /></div>

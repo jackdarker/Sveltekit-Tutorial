@@ -90,7 +90,6 @@
         {/each}
 </div>
 {#if (design!=="bottom")}
-<p>{current_page}</p>
     <div class="flex-container">
     <PaginationNav total={total} shown={5} bind:page={current_page} on:change={(e)=>(onpage(e.detail.page))}/> 
     </div>

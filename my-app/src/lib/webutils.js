@@ -1,3 +1,7 @@
+
+import { get } from 'svelte/store';
+import { viewHandle } from './stores';
+
 /** 
  * fetchs a image and loads it into <img> specified by imgElement
  * see route/api/server.js
@@ -33,4 +37,25 @@ export async function loadDirectory(path) {
         data = await response.json();
     }
     return(data);
+}
+
+export function openWindow(post){
+    function onmounted(event){
+        //alert(`Received ${event.data} from ${event.origin}`);
+        if(event.data==='mounted') handle.postMessage(post, '*'); //viewer-eventprocessor mounted in onMount!
+        window.removeEventListener('message',onmounted);
+    };
+    let handle=get(viewHandle);
+    if(handle && !handle.closed) {
+        handle.postMessage(post, '*');
+    } else {
+        handle = open('/viewer') 
+        window.addEventListener('message', onmounted);
+        /*handle.onload = function() {
+            //let html = `<div style="font-size:30px">Welcome! ${post.fileName}</div>`;
+            //handle.document.body.insertAdjacentHTML('afterbegin', html); 
+            handle.postMessage(post, '*');
+        };*/
+        viewHandle.set(handle);
+    }
 }

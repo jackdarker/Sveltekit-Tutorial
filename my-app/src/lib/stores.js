@@ -50,5 +50,13 @@ function createSettings() {
 		set: set_
 	};
 }
+function createViewHandle() {
+	const { subscribe, set, update } = writable(null);
 
+	return {
+		subscribe,
+		set: (x)=>set(x)
+	};
+}
 export const settings = createSettings();
+export const viewHandle = createViewHandle();

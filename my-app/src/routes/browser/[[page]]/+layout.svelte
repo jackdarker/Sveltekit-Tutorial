@@ -2,9 +2,10 @@
     import { onMount } from 'svelte';
     import Search from '$lib/components/Search.svelte';
     import Layout from '$lib/components/HeaderSidebarMain.svelte';
+    import Nav from "$lib/components/Nav.svelte";
     import ImageView from '$lib/components/ImageView.svelte';
 	import ThumbsList from "$lib/components/ThumbsList.svelte";
-    import {loadImage} from '$lib/webutils.js';
+    import {loadImage,openWindow} from '$lib/webutils.js';
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
     export let data;
@@ -28,9 +29,11 @@
     }
 </script>
 <Layout>
+    <Nav slot="header"/>
     <span slot="sidebar"><Search /></span>
     <div>
-    <img class="medsize" id="img" src="" alt=""/>
+    <img class="medsize" id="img" src="" alt="" on:click={()=>openWindow({fileName:picturename})}/>
+    <a href="/" target="_blank">{picturename}</a>
     <p>{picturename}</p>
     </div>
     <!--{#key $page.url.pathname}-->
