@@ -14,8 +14,9 @@
     };
     let imagePath, thumbPath;   
     let showThumb = true;
-    function buildImagePath(post) {
-        loadImage('#img',post.fileName)
+    function buildImagePath(data) {
+        post.fileName=data.fileName;
+        loadImage('#img',data.fileName)
     }
     onMount(()=>{
         //receive the image to display from main-app
@@ -40,7 +41,6 @@
     }
 </style>
 
-<div class="viewContainer"> <p>Viewer</p>
+<div class="viewContainer"> <p>{post.fileName}</p>
     <img id='img' class="postImage" src="{imagePath}" alt="{post.fileName}" >
-    <p>säfjawdaäfgjgjäs</p>
 </div>

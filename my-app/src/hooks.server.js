@@ -9,6 +9,7 @@ export async function handle({ event, resolve }) {
 	
 	return await resolve(event);
 }
+
 export async function handleFetch({ request, fetch }) {
     if (request.url.startsWith('https://api.yourapp.com/')) {
         // clone the original request, but change the URL

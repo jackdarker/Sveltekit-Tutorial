@@ -1,3 +1,5 @@
+/* different svelte-stores used in client
+ */
 import { writable } from 'svelte/store';
 
 function createSettings() {

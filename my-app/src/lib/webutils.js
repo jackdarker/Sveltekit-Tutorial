@@ -1,4 +1,6 @@
 
+/* a collection of functions used in the client
+*/
 import { get } from 'svelte/store';
 import { viewHandle } from './stores';
 

@@ -1,11 +1,11 @@
 import { error } from '@sveltejs/kit';
-import fetchData from '$lib/data.js';
+import {fetchData} from '$lib/data.js';
 
 export async function load(event) {
 	//const post = posts.find((post) => post.slug === params.slug);
-    let thumbs,params=event.params; 
+    let thumbs,params=event.params||{}; 
     //console.log(event.locals.answer);  was created in hook.handle
-    params.page = params.page ?? 1;
+    params.page = params.page ?? 1;params.listFiles=true;
     await fetchData("", params)
     .then(function (response) {
         thumbs={};

@@ -1,5 +1,7 @@
 <script>
     import { onMount } from 'svelte';
+    	import "carbon-components-svelte/css/white.css";
+	import '$lib/styles/style.css';
     import Search from '$lib/components/Search.svelte';
     import Layout from '$lib/components/HeaderSidebarMain.svelte';
     import Nav from "$lib/components/Nav.svelte";
@@ -9,10 +11,8 @@
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
     export let data;
-    let picture="..\\public\\Icon.1_01.png",picturename;
-    onMount(()=>{
-        //loadImage('#img','D:/public/_pics/1496956336.tomatocoup_cuffs_ring.jpg');
-    });
+    let picturename;
+
     function onthumb(e) {
         picturename=e.currentTarget.alt; //Todo as img.src="blob:html..." we have to use alt="../public/.." instead
         loadImage('#img',picturename);
