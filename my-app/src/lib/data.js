@@ -15,6 +15,7 @@ async function processDirectory(abspath,params) {
   const listFiles = params.listFiles || false;
   let baseurl;
   baseurl=relative(IMGDIR,abspath);
+  baseurl=(baseurl.length===0)?baseurl:baseurl+sep; // public/thumbs/
   baseurl=baseurl.replaceAll("\\","/");//dont use \\ in url
   //console.log(path);
   let data=[];
@@ -22,6 +23,7 @@ async function processDirectory(abspath,params) {
   let stats = await FS.promises.stat(abspath);
   if(!stats.isDirectory()) {throw new Error('not a directory: '+abspath);}
   let entrys = await FS.promises.readdir(abspath,{withFileTypes:true});
+  entrys.sort((a,b)=>{let _a=a.name.toLowerCase(), _b=b.name.toLowerCase(); return((_a>_b)?1:(_a<_b)?-1:0)});
   for(var i=0; i<entrys.length;i++) {
     let isDir=false,entry=entrys[i];
     if(entry.isDirectory())isDir=true;

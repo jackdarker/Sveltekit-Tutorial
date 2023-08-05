@@ -8,63 +8,36 @@
   let activeId = "";
   let mounted=false;
   let selectedIds = [];
-  let children = [
-    { id: 0, text: "AI / Machine learning" },
-    {
-      id: 1,
-      text: "Analytics",
-      children: [
-        {
-          id: 2,
-          text: "IBM Analytics Engine",
-          children: [
-            { id: 3, text: "Apache Spark" },
-            { id: 4, text: "Hadoop" },
-          ],
-        },
-        { id: 5, text: "IBM Cloud SQL Query" },
-        { id: 6, text: "IBM Db2 Warehouse on Cloud" },
-      ],
-    },
-    {
-      id: 7,
-      text: "Blockchain",
-      children: [{ id: 8, text: "IBM Blockchain Platform" }],
-    },
-    {
-      id: 9,
-      text: "Databases",
-      children: [
-        { id: 10, text: "IBM Cloud Databases for Elasticsearch" },
-        { id: 11, text: "IBM Cloud Databases for Enterprise DB" },
-        { id: 12, text: "IBM Cloud Databases for MongoDB" },
-        { id: 13, text: "IBM Cloud Databases for PostgreSQL" },
-      ],
-    },
-    {
-      id: 14,
-      text: "Integration",
-      disabled: true,
-      children: [{ id: 15, text: "IBM API Connect", disabled: true }],
-    },
-  ];
-  export let dirtree=[];
+  let children = [];
+  let dirlookup={}, nodesToLoad=[];
+  let _loadingNode=null;
   let selectedIndex = 0;
   let searchterm="";
-  function updateDirTree(dirtree) {
+
+  function updateDirTree(dirtree,updateID) {
+    
+    if(updateID==="") { //root
+      children=dirtree;
+      //dirlookup={"ROOT":dirtree};
+    } else {
+      let node=dirlookup[updateID];
+      node.children=dirtree;
+    }   
+    for(var i=0;i<dirtree.length;i++){
+      let sub = dirtree[i];
+      sub.children=[];
+      dirlookup[sub.id]=sub;
+      nodesToLoad.push(sub.id);
+    }
+    //select next subelement to fetch (broadfirst)
+    if(nodesToLoad.length>0) {
+      loadDir(nodesToLoad.shift());
+    }
   }
-  afterUpdate(() => {
-    //loadDir();
-		//updateDirTree(dirtree);
-	});
-    onMount(()=>{
-      mounted=true;loadDir();
-    });
-  $: updateDirTree(dirtree);
-  function loadDir(){
-    loadDirectory("")
+  function loadDir(path){
+    loadDirectory(path)
     .then(function (response) {
-        dirtree=response;
+        updateDirTree(response.dirs,path)
     })
     .catch(error => {
         console.error(error);
@@ -72,11 +45,21 @@
     .finally(() => {
     });
   }
+  afterUpdate(() => {
+    //loadDir();  dont call or creates loop
+		//updateDirTree(dirtree);
+	});
+    onMount(()=>{
+      mounted=true;
+      loadDir("");
+    });
+  //$: updateDirTree(dirtree);
+  
   
 </script>
 
 <aside>
-  <p>{JSON.stringify(dirtree)}</p>
+  <p>{JSON.stringify(dirlookup)}</p>
   <ContentSwitcher bind:selectedIndex>
     <Switch text="Tags" />
     <Switch text="Directorys" />
@@ -99,11 +82,7 @@
         console.log("submit", e);
     }}
     >
-    <TreeView
-      labelText="Cloud Products"
-      {children}
-      bind:activeId
-      bind:selectedIds
+    <TreeView {children} bind:activeId  bind:selectedIds
       on:select={({ detail }) => console.log("select", detail)}
       on:toggle={({ detail }) => console.log("toggle", detail)}
       on:focus={({ detail }) => console.log("focus", detail)}
