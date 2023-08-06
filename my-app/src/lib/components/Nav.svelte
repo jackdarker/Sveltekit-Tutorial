@@ -1,4 +1,8 @@
+<script>
+	import UserCtrl from '$lib/components/UserCtrlWidget.svelte'
+</script>
 <nav class="center">
+	<UserCtrl />
 	<a href="/">home</a>
 	<a href="/about">about</a>
     <a href="/blog">blog</a>

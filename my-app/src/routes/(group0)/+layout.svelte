@@ -1,9 +1,6 @@
 <script>
+	import '$lib/styles/style.svelte';
 	import Nav from "$lib/components/Nav.svelte";
-
 </script>
-
 <Nav />
-<h1>home</h1>
-<p>this is the home page.</p>
-
+<slot />

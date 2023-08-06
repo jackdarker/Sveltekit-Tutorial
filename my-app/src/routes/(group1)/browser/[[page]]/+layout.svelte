@@ -1,7 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import "carbon-components-svelte/css/white.css";
-	import '$lib/styles/style.css';
+	import '$lib/styles/style.svelte';
     import Search from '$lib/components/Search.svelte';
     import Layout from '$lib/components/HeaderSidebarMain.svelte';
     import Nav from "$lib/components/Nav.svelte";

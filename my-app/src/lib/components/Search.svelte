@@ -19,11 +19,12 @@
     console.log("select", detail)
   }
   function updateDirTree(dirtree,updateID) {    
+    let node;
     if(updateID==="") { //root
-      children=dirtree;
+      children=[{id:"ROOT",text:"ROOT",children:dirtree}];
     } else {
-      let node=dirlookup[updateID];
-      node.children=dirtree;
+      node=dirlookup[updateID];
+      node.children=(dirtree.length===0)?null:dirtree;
     }   
     for(var i=0;i<dirtree.length;i++){
       //append dir to lookup; create children-placeholder
@@ -86,9 +87,7 @@
     }}
     >
     <TreeView {children} bind:activeId  bind:selectedIds
-      on:select={({ detail }) => onselectdir(detail)}
-      on:toggle={({ detail }) => console.log("toggle", detail)}
-      on:focus={({ detail }) => console.log("focus", detail)}
+      on:select={({ detail }) => {detail.id=(detail.id==="ROOT")?"":detail.id;onselectdir(detail);}}
     />
     </Form>
   {/if}

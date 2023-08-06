@@ -4,6 +4,7 @@ import { writable } from 'svelte/store';
 
 function createSettings() {
 	let defaultSettings = {
+		theme:"white",
 		animationSpeed: 'normal'
 	};
 
@@ -24,7 +25,7 @@ function createSettings() {
 
 	function loadFromLocalStorage() {
 		try {
-			const data = window.localStorage.getItem('settings');
+			const data = null;// window.localStorage.getItem('settings');	//todo window might not exist yet
 			if (data === null) {
 				set(defaultSettings);
 			} else {
