@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    	import "carbon-components-svelte/css/white.css";
+    import "carbon-components-svelte/css/white.css";
 	import '$lib/styles/style.css';
     import Search from '$lib/components/Search.svelte';
     import Layout from '$lib/components/HeaderSidebarMain.svelte';
@@ -11,8 +11,14 @@
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
     export let data;
+    let path="",pageNo=1;
     let picturename;
-
+    function onSelectDir(detail){
+        const replaceState=false;
+        console.log("select", detail)
+        path=encodeURIComponent(detail.id);
+        goto(`/browser/1?path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+    }
     function onthumb(e) {
         picturename=e.currentTarget.alt; //Todo as img.src="blob:html..." we have to use alt="../public/.." instead
         loadImage('#img',picturename);
@@ -20,17 +26,20 @@
         //picturename = e.currentTarget.name;
     }
     
-    async function routeToPage(route) {
+    async function routeToPage(_pageNo) {
         const replaceState=false;
-        let x=$page.route.id;
+        pageNo=_pageNo;
+        //let x=$page.route.id;
         //goto(`/`).then(()=>
-        goto(`/browser/${route}`, { replaceState:replaceState,invalidateAll:true })
+        //goto(`/browser/${pageNo}?page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+        //  /browser?path=thumbs&page=2
+        goto(`/browser/1?path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
         // );
     }
 </script>
 <Layout>
     <Nav slot="header"/>
-    <span slot="sidebar"><Search /></span>
+    <span slot="sidebar"><Search onselectdir={onSelectDir}/></span>
     <div>
     <img class="medsize" id="img" src="" alt="" on:click={()=>openWindow({fileName:picturename})}/>
     <a href="/" target="_blank">{picturename}</a>

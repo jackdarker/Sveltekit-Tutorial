@@ -4,9 +4,12 @@ import {fetchData} from '$lib/data.js';
 export async function load(event) {
 	//const post = posts.find((post) => post.slug === params.slug);
     let thumbs,params=event.params||{}; 
+    let search = event.url.searchParams;
     //console.log(event.locals.answer);  was created in hook.handle
-    params.page = params.page ?? 1;params.listFiles=true;
-    await fetchData("", params)
+    params.page = params.page ?? 1;
+    params.listFiles=true;
+    params.path= decodeURIComponent(search.get('path')||"");
+    await fetchData(params.path, params)
     .then(function (response) {
         thumbs={};
         thumbs.path = response.path;

@@ -14,7 +14,7 @@ function verifyPath(path){
     throw new Error('not a directory: '+path);
   }  
   const rpath=relative(IMGDIR,path)
-  if(rpath.startsWith("..")) {
+  if(rpath.startsWith("..")) { //need to restrict access to publi dir !
     throw new Error('invalid directory: '+path);
   }
 }
@@ -32,8 +32,7 @@ export async function GET(request) {
   }*/
   switch(op){
     case "file": 
-    { //file is relative to app or absolute ("D:\\public\\_pics\\231546.jpg" would work)
-      //Todo need to restrict access to publi dir !
+    { //file is relative to IMGDIR
       const filename = pathresolve(IMGDIR,decodeURIComponent(urlParams.get('file')));
       verifyPath(filename);
       const contenttype = getContentTypeForFileType(filename);

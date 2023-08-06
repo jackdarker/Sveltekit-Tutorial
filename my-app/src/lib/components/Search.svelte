@@ -5,6 +5,7 @@
   } from "carbon-components-svelte";
   import { onMount,afterUpdate } from 'svelte';
   import {loadDirectory} from '$lib/webutils.js'
+  export let onselectdir=_onselectdir;
   let activeId = "";
   let mounted=false;
   let selectedIds = [];
@@ -14,16 +15,18 @@
   let selectedIndex = 0;
   let searchterm="";
 
-  function updateDirTree(dirtree,updateID) {
-    
+  function _onselectdir(detail){
+    console.log("select", detail)
+  }
+  function updateDirTree(dirtree,updateID) {    
     if(updateID==="") { //root
       children=dirtree;
-      //dirlookup={"ROOT":dirtree};
     } else {
       let node=dirlookup[updateID];
       node.children=dirtree;
     }   
     for(var i=0;i<dirtree.length;i++){
+      //append dir to lookup; create children-placeholder
       let sub = dirtree[i];
       sub.children=[];
       dirlookup[sub.id]=sub;
@@ -59,7 +62,7 @@
 </script>
 
 <aside>
-  <p>{JSON.stringify(dirlookup)}</p>
+  <!--<p>{JSON.stringify(dirlookup)}</p>-->
   <ContentSwitcher bind:selectedIndex>
     <Switch text="Tags" />
     <Switch text="Directorys" />
@@ -83,7 +86,7 @@
     }}
     >
     <TreeView {children} bind:activeId  bind:selectedIds
-      on:select={({ detail }) => console.log("select", detail)}
+      on:select={({ detail }) => onselectdir(detail)}
       on:toggle={({ detail }) => console.log("toggle", detail)}
       on:focus={({ detail }) => console.log("focus", detail)}
     />

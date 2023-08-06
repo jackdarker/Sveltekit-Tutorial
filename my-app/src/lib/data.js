@@ -23,7 +23,7 @@ async function processDirectory(abspath,params) {
   let stats = await FS.promises.stat(abspath);
   if(!stats.isDirectory()) {throw new Error('not a directory: '+abspath);}
   let entrys = await FS.promises.readdir(abspath,{withFileTypes:true});
-  entrys.sort((a,b)=>{let _a=a.name.toLowerCase(), _b=b.name.toLowerCase(); return((_a>_b)?1:(_a<_b)?-1:0)});
+  entrys.sort((a,b)=>{let _a=a.name.toLowerCase(), _b=b.name.toLowerCase(); return((_a>_b)?1:(_a<_b)?-1:0)}); //sort alphabet.
   for(var i=0; i<entrys.length;i++) {
     let isDir=false,entry=entrys[i];
     if(entry.isDirectory())isDir=true;
@@ -36,6 +36,14 @@ async function processDirectory(abspath,params) {
   } 
   return(data);
 }
+/**
+ *
+ *
+ * @export
+ * @param {*} path relative to IMGDIR
+ * @param {*} params
+ * @return {*} 
+ */
 export function fetchData(path,params) {
   params.listDirs = params.listDirs || false, params.listFiles=params.listFiles?true:false;
   const page = params.page || 1;
