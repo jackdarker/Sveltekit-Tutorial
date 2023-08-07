@@ -2,9 +2,9 @@
     import { onMount } from 'svelte';
 	import '$lib/styles/style.svelte';
     import Search from '$lib/components/Search.svelte';
-    import Layout from '$lib/components/HeaderSidebarMain.svelte';
-    import Nav from "$lib/components/Nav.svelte";
-    import ImageView from '$lib/components/ImageView.svelte';
+    import Layout from '$lib/components/LyHeaderSidebarMain.svelte';
+    import TagEdit from '$lib/components/TagEdit.svelte';
+    import UserCtrl from '$lib/components/UserCtrlWidget.svelte'
 	import ThumbsList from "$lib/components/ThumbsList.svelte";
     import {loadImage,openWindow} from '$lib/webutils.js';
     import { goto } from '$app/navigation';
@@ -14,9 +14,10 @@
     let picturename;
     function onSelectDir(detail){
         const replaceState=false;
-        console.log("select", detail)
+        //console.log("select", detail)
+        pageNo=1;
         path=encodeURIComponent(detail.id);
-        goto(`/browser/1?path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+        goto(`/browser/${pageNo}?path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
     }
     function onthumb(e) {
         picturename=e.currentTarget.alt; //Todo as img.src="blob:html..." we have to use alt="../public/.." instead
@@ -32,17 +33,19 @@
         //goto(`/`).then(()=>
         //goto(`/browser/${pageNo}?page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
         //  /browser?path=thumbs&page=2
-        goto(`/browser/1?path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+        goto(`/browser/${pageNo}?path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
         // );
     }
 </script>
 <Layout>
-    <Nav slot="header"/>
+    <UserCtrl slot="header2"/>
     <span slot="sidebar"><Search onselectdir={onSelectDir}/></span>
+    <div style="display: flex">
     <div>
-    <img class="medsize" id="img" src="" alt="" on:click={()=>openWindow({fileName:picturename})}/>
-    <a href="/" target="_blank">{picturename}</a>
-    <p>{picturename}</p>
+        <img class="medsize" id="img" src="" alt="" on:click={()=>openWindow({fileName:picturename})}/>
+        <p>{picturename}</p>
+    </div>
+        <div><TagEdit /></div>
     </div>
     <!--{#key $page.url.pathname}-->
     <ThumbsList slot="footer" design="top" onclick={onthumb} data={data} onpage={routeToPage}/>

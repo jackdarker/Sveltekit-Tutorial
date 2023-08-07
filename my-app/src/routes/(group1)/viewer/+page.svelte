@@ -1,6 +1,11 @@
 <script>
+    import '$lib/styles/style.svelte';
+    import { Loading } from "carbon-components-svelte";
+    import UserCtrl from '$lib/components/UserCtrlWidget.svelte'
+    import Layout from '$lib/components/LySidebarMain.svelte';
     import { onMount,afterUpdate } from 'svelte';
     import {loadImage} from '$lib/webutils.js';
+    import { settings } from '$lib/stores.js';
     export let post={
     "postID": 11,
     "name": "Anonymous ",
@@ -13,17 +18,21 @@
     "replyToID": null
     };
     let imagePath, thumbPath;   
-    let showThumb = true;
+    let showThumb = true,mounted=false;
     function buildImagePath(data) {
         post.fileName=data.fileName;
         loadImage('#img',data.fileName)
     }
     onMount(()=>{
-        //receive the image to display from main-app
+        mounted=true;
         window.addEventListener('message', function(event) {
-            //alert(`Received ${event.data} from ${event.origin}`);
+            //alert(`Received ${JSON.stringify(event.data)} from ${event.origin}`);
             if(event.data.fileName!=undefined) {
-                    buildImagePath(event.data);
+                //receive the image to display from main-app
+                buildImagePath(event.data);
+            } else if (event.data.settings!=undefined){
+                //receive theme setting from main-app
+                settings.set(event.data.settings);
             }
         });
         window.opener.postMessage("mounted","*");
@@ -40,7 +49,14 @@
         width: 90%;
     }
 </style>
-
-<div class="viewContainer"> <p>{post.fileName}</p>
-    <img id='img' class="postImage" src="{imagePath}" alt="{post.fileName}" >
-</div>
+{#if mounted===true}
+<Layout>
+    <UserCtrl slot="header2"/>
+    <span slot="sidebar"></span>
+    <div class="viewContainer"> <p>{post.fileName}</p>
+        <img id='img' class="postImage" src="{imagePath}" alt="{post.fileName}" >
+    </div>
+</Layout>
+{:else}    
+    <Loading />
+{/if}

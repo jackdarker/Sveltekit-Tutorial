@@ -1,6 +1,7 @@
 <script>
 	import '$lib/styles/style.svelte';
     import SettingsSVG from "carbon-icons-svelte/lib/Settings.svelte";
+    import HomeSVG from "carbon-icons-svelte/lib/Home.svelte";
     import LoginSVG from "carbon-icons-svelte/lib/Login.svelte";
     import LogoutSVG from "carbon-icons-svelte/lib/Logout.svelte";
 	import {
@@ -9,7 +10,6 @@
         Button,
     } from "carbon-components-svelte";
     import { onDestroy } from 'svelte';
-    import { get } from 'svelte/store';
     import { settings } from '$lib/stores.js';
     let theme = "white";
     settings.loadFromLocalStorage();
@@ -28,16 +28,16 @@
   </RadioButtonGroup>
 -->
 <div>
+    <Button size="field" iconDescription="Home" icon={HomeSVG} href="/"/>
     <Button size="field" iconDescription="Settings" icon={SettingsSVG}/>
     <Button size="field" iconDescription="Logout" icon={LogoutSVG}/>
     <Dropdown
-    titleText="Theme"
     type="inline"
     bind:selectedId={$settings.theme}
     items={[
         { id: "white", text: "white" },
-        { id: "g80", text: "g80" },
-        { id: "g100", text: "g100" },
+        { id: "g80", text: "dark" },
+        { id: "g100", text: "black" },
     ]}
     />
 </div>

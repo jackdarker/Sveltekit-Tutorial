@@ -2,7 +2,7 @@
 /* a collection of functions used in the client
 */
 import { get } from 'svelte/store';
-import { viewHandle } from './stores';
+import { viewHandle,settings } from './stores';
 
 /** 
  * fetchs a image and loads it into <img> specified by imgElement
@@ -44,8 +44,12 @@ export async function loadDirectory(path) {
 export function openWindow(post){
     function onmounted(event){
         //alert(`Received ${event.data} from ${event.origin}`);
-        if(event.data==='mounted') handle.postMessage(post, '*'); //viewer-eventprocessor mounted in onMount!
         window.removeEventListener('message',onmounted);
+        if(event.data==='mounted') { //viewer-eventprocessor gets mounted in onMount!
+            handle.postMessage({"settings":get(settings)}, '*');
+            handle.postMessage(post, '*'); 
+        }
+        
     };
     let handle=get(viewHandle);
     if(handle && !handle.closed) {
