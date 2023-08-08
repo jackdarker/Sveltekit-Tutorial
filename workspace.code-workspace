@@ -11,7 +11,7 @@
 				"type": "pwa-msedge",
 				"name": "http://localhost:5173/",
 				"request": "launch",
-				"url": "http://localhost:5173/"
+				"url": "http://[::1]:5173/"
 			},
 			{
 				"name": "Attach",

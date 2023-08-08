@@ -43,7 +43,7 @@
     <div style="display: flex">
     <div>
         <img class="medsize" id="img" src="" alt="" on:click={()=>openWindow({fileName:picturename})}/>
-        <p>{picturename}</p>
+        <p>{picturename}</p><a href="/tagger">Edit tags</a>
     </div>
         <div><TagEdit /></div>
     </div>

@@ -1,0 +1,124 @@
+<script>
+    import '$lib/styles/style.svelte';
+    import SaveSVG from "carbon-icons-svelte/lib/Save.svelte";
+    import UndoSVG from "carbon-icons-svelte/lib/Undo.svelte";
+    import { Button, Tag,Form,FormItem,
+        Search  } from "carbon-components-svelte";
+
+    export let data;  //see page.server.js#load
+    let search = "";
+    let locAssignedTags =[]; //tags are assigned to local variables when manipulated in the client
+    let locUnassignedTags =[];
+
+    function onDropTag(id){
+        // this doesnt work as it deletes on client side but doesnt force the server to rebuild the page
+        //for(var i=tags.length-1;i>=0;i--){
+        //    if(tags[i].id===id) tags.splice[i];
+        //}
+        //...instead toggle delete-flag in the elmnt
+        let form=document.forms["myForm2"]
+        form["id"].value=id;
+        form.submit();
+    }
+    function afterReload(_data){    //refresh local data with loaded data
+        locAssignedTags=[];locUnassignedTags=[];
+        let tag,index;
+        for(var i=0;i<_data.myTags.length;i++){
+            locAssignedTags.push(_data.myTags[i])
+        };
+        for(var i=0;i<_data.allTags.length;i++){
+            tag=_data.allTags[i];
+            index = locAssignedTags.findIndex((e)=>{return(e.id===tag.id)});
+            if(index<0) locUnassignedTags.push(tag)
+        };
+        locAssignedTags=locAssignedTags;
+        locUnassignedTags=locUnassignedTags;
+    }
+    function assignTags(tag,unassign){ //move tags from Unassinged to assigned, but this is only stored locally in the client. Transmission to server is done with Save-Button
+        let from,to;
+        if(unassign) from=locAssignedTags,to=locUnassignedTags;
+        else to=locAssignedTags,from=locUnassignedTags;
+        to.push(tag);
+        let i = from.findIndex((e)=>{return(e.id===tag.id)});
+        if(i>=0) from.splice(i,1);
+        locAssignedTags=locAssignedTags;
+        locUnassignedTags=locUnassignedTags;
+    }
+    function uploadAssign(){
+        // this doesnt work as it deletes on client side but doesnt force the server to rebuild the page
+        //for(var i=tags.length-1;i>=0;i--){
+        //    if(tags[i].id===id) tags.splice[i];
+        //}
+        //...instead send a form with the data
+        let ids="";
+        for(var i=0;i<locAssignedTags.length;i++){
+            ids+=locAssignedTags[i].id+",";
+        }
+        ids=ids.substring(0,ids.length-1);
+        let form=document.forms["assignForm"]; //see form-node
+        form["idlist"].value=ids;
+        form.submit();
+    }
+    function revertAssign(){ //restore with last loaded server data
+        afterReload(data)
+    }
+    function validateForm(e) {
+        let x = document.forms["myForm"]["id"].value;
+        if (x == "") {
+            alert("Name must be filled out");
+            e.preventDefault();
+        }
+    }
+    $:afterReload(data);
+</script>
+
+<form method="POST" action="?/create">
+    <label> add a tag:
+        <input name="id" autocomplete="off"/>
+    </label>
+</form>
+
+<ul class="todos"> All Tags
+    {#each data.todos as todo (todo.id)}
+        <li>
+            {todo.description}
+        </li>
+    {/each}
+</ul>
+
+<div><Search size="sm" autocomplete="on" bind:search/>
+    <Button size="field" iconDescription="Save" icon={SaveSVG} on:click={(e)=>{uploadAssign()}}/>
+    <Button size="field" iconDescription="Undo" icon={UndoSVG} on:click={(e)=>{revertAssign()}}/>
+</div>
+
+<div><p>All Tags</p>
+    {#each locUnassignedTags as tag, i }
+        <Tag id={tag.id} type={tag.id} interactive on:click={(e)=>(assignTags(tag))}>{tag.id}</Tag>
+    {/each}
+</div>
+<div><p>Assigned Tags</p>
+    {#each locAssignedTags as tag, i }
+        <Tag id={tag.id} type={tag.id} interactive on:click={(e)=>(assignTags(tag,true))}>{tag.id}</Tag>
+    {/each}
+</div>
+<Form name="myForm" method="POST" action="?/delete" on:submit={(e)=>{validateForm(e)}}>
+    <label>
+        delete a tag:
+        <input
+            name="id"
+            autocomplete="off"
+        />
+    </label>
+</Form>
+<Form name="myForm2" method="POST" action="?/delete" on:submit={(e)=>{validateForm(e)}} hidden>
+    <label>
+        delete a tag:
+        <input
+            name="id"
+            autocomplete="off"
+        />
+    </label>
+</Form>
+<Form name="assignForm" method="POST" action="?/assign" on:submit={(e)=>{validateForm(e)}} hidden>
+    <input name="idlist" autocomplete="off"/>
+</Form>

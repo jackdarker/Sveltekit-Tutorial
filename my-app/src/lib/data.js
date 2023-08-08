@@ -72,3 +72,63 @@ export function fetchData(path,params) {
       })
   });
 }
+const allTags = [{id:"red"},{id:"green"},{id:"blue"}];
+const mytags = [{id:"brown"}];
+
+export function getAllTags() {
+	return(allTags);
+}
+export function getMyTags() {
+	return(mytags);
+}
+export function createTag(tag){
+  let i = allTags.findIndex((e)=>{return(e.id===tag)});
+  if(i<0) allTags.push({id:tag});
+}
+export function deleteTag(tag){
+  let i = allTags.findIndex((e)=>{return(e.id===tag)});
+  if(i>=0) allTags.splice(i,1);
+}
+export function assignTag(idlist){
+  mytags.splice(0,mytags.length);
+  for(var i=0; i<idlist.length;i++){
+    mytags.push({id:idlist[i]});
+  }
+}
+
+/*++++++++++++++++++++++++++++++++++++++++++++++*/
+// In a real app, this data would live in a database,
+// rather than in memory. But for now, we cheat.
+// TODO REMOVE this->
+const db = new Map();
+
+export function getTodos(userid) {
+	if (!db.get(userid)) {
+		db.set(userid, [{
+			id: crypto.randomUUID(),
+			description: 'Learn SvelteKit',
+			done: false
+		}]);
+	}
+
+	return db.get(userid);
+}
+
+export function createTodo(userid, description) {
+	const todos = db.get(userid);
+
+	todos.push({
+		id: crypto.randomUUID(),
+		description,
+		done: false
+	});
+}
+
+export function deleteTodo(userid, todoid) {
+	const todos = db.get(userid);
+	const index = todos.findIndex((todo) => todo.id === todoid);
+
+	if (index !== -1) {
+		todos.splice(index, 1);
+	}
+}

@@ -34,4 +34,3 @@
     <Tag type="cool-gray">cool-gray</Tag>
     <Tag type="warm-gray">warm-gray</Tag>
 </div>
-<div></div>
