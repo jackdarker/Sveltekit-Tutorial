@@ -5,10 +5,30 @@
     <div class="content"><slot /></div>
     <div class="footer"><slot name=footer/></div>
     <div class="overlay" hidden>Overlay</div>
-  </div>
+</div>
 
   <style>
-    .wrapper {
+    .wrapper{
+      min-height: 100vh;
+      display: grid;
+      grid: "hd hd"
+            "hd2 hd2"
+            "sd sd"
+            "main main"
+            "main main" 
+            "ft ft"
+            / 1fr 1fr;
+    }
+    @media (min-width: 50em) { 
+      .wrapper{
+        grid: "hd2 hd2 hd hd" 50px
+              "sd  main main main"   1fr
+              "sd  main main main"  1fr
+              "sd ft ft ft" min-content
+              / 1fr  1fr  1fr  1fr;
+    }
+    }
+    .wrapper2 {
     display: grid;
     grid-template-columns: repeat(9, 1fr);
     grid-auto-rows: minmax(100px, auto);

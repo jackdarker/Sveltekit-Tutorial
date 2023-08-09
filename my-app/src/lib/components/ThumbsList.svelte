@@ -65,12 +65,15 @@
 	});
     onMount(()=>{
       mounted=true;//changePage(data);
+      let elmnt=document.querySelector("#Paginator");
+      let style = getComputedStyle(elmnt);
+      //console.log(style.width);   Todo depending on available space, set per_page and requery list
     });
     $: changePage(data);
 </script>
 
 {#if (design==="bottom")}
-    <div class="flex-container">
+    <div class="flex-container" id="Paginator">
     <PaginationNav bind:page={current_page} total={total} shown={5} on:change={(e)=>onpage(e.detail.page)}/> 
     </div>
 {/if}
@@ -90,7 +93,7 @@
         {/each}
 </div>
 {#if (design!=="bottom")}
-    <div class="flex-container">
+    <div class="flex-container" id="Paginator">
     <PaginationNav total={total} shown={5} bind:page={current_page} on:change={(e)=>(onpage(e.detail.page))}/> 
     </div>
 {/if}

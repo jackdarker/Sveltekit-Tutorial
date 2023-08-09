@@ -1,5 +1,6 @@
 /* data-access used by server
 */
+import {dbHandler} from "$lib/dbHandler.js";
 import {resolve as pathresolve,relative,sep,isAbsolute} from "path";
 import FS from "fs";
 import {BASEDIR,IMGDIR} from "$lib/const.js"

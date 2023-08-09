@@ -9,23 +9,31 @@
     import {loadImage,openWindow} from '$lib/webutils.js';
     import { goto } from '$app/navigation';
     import { page } from '$app/stores';
+    
     export let data;
     let path="",pageNo=1;
-    let picturename;
+    let picturename='',mounted=false;
     function onSelectDir(detail){
         const replaceState=false;
         //console.log("select", detail)
         pageNo=1;
         path=encodeURIComponent(detail.id);
-        goto(`/browser/${pageNo}?path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+        goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
     }
     function onthumb(e) {
+        const replaceState=false;
         picturename=e.currentTarget.alt; //Todo as img.src="blob:html..." we have to use alt="../public/.." instead
-        loadImage('#img',picturename);
-        //picture=e.currentTarget.ariaLabel;
-        //picturename = e.currentTarget.name;
+        goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
     }
-    
+    function loadItem(_data){
+        picturename = _data.thumbs.item;
+        if(mounted!=true) return;
+        loadImage('#img',picturename);
+    }
+    onMount(()=>{
+      mounted=true;
+      loadImage('#img',picturename); //if returning to page
+    });
     async function routeToPage(_pageNo) {
         const replaceState=false;
         pageNo=_pageNo;
@@ -33,9 +41,10 @@
         //goto(`/`).then(()=>
         //goto(`/browser/${pageNo}?page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
         //  /browser?path=thumbs&page=2
-        goto(`/browser/${pageNo}?path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+        goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
         // );
     }
+    $:loadItem(data);
 </script>
 <Layout>
     <UserCtrl slot="header2"/>
@@ -43,7 +52,7 @@
     <div style="display: flex">
     <div>
         <img class="medsize" id="img" src="" alt="" on:click={()=>openWindow({fileName:picturename})}/>
-        <p>{picturename}</p><a href="/tagger">Edit tags</a>
+        <p>{picturename}</p><a href={"/tagger?item="+encodeURIComponent(picturename)+"&from="+$page.url}>Edit tags</a>
     </div>
         <div><TagEdit /></div>
     </div>
@@ -58,5 +67,8 @@
 .medsize{ 
     max-width: 40em; 
     max-height: 40em;
+}
+.content {
+    margin:1em;
 }
 </style>

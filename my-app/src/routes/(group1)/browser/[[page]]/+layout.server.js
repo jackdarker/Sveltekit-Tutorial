@@ -9,9 +9,11 @@ export async function load(event) {
     params.page = params.page ?? 1;
     params.listFiles=true;
     params.path= decodeURIComponent(search.get('path')||"");
+    params.item= decodeURIComponent(search.get('item')||"");
     await fetchData(params.path, params)
     .then(function (response) {
         thumbs={};
+        thumbs.item = params.item;
         thumbs.path = response.path;
         thumbs.current_page = response.current_page;
         thumbs.from = response.from;
@@ -26,7 +28,7 @@ export async function load(event) {
     })
     .finally(() => { });
 	if (!thumbs) throw error(404);
-	return {
+	return { 
 		thumbs
 	};
 }

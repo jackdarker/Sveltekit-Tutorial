@@ -24,6 +24,7 @@ My understanding of tags:
 # Dependencys
 
  - For UI-components https://carbon-components-svelte.onrender.com/
+ - for database sqlite3
 
 
 # create-svelte

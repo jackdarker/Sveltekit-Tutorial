@@ -4,7 +4,7 @@ import { writable } from 'svelte/store';
 
 function createSettings() {
 	let defaultSettings = {
-		theme:"white",
+		theme:"g80",
 		animationSpeed: 'normal'
 	};
 

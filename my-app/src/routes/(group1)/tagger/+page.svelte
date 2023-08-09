@@ -1,12 +1,15 @@
 <script>
     import '$lib/styles/style.svelte';
+    import {page} from '$app/stores'
     import SaveSVG from "carbon-icons-svelte/lib/Save.svelte";
     import UndoSVG from "carbon-icons-svelte/lib/Undo.svelte";
-    import { Button, Tag,Form,FormItem,
-        Search  } from "carbon-components-svelte";
+    import ChevronLeftSVG from "carbon-icons-svelte/lib/ChevronLeft.svelte";
+    import { Button, Tag,Form, Search  } from "carbon-components-svelte";
 
+    const redirectTo = $page.url.searchParams.get('from') ||'';
     export let data;  //see page.server.js#load
-    let search = "";
+
+    let search = "",modified=false;
     let locAssignedTags =[]; //tags are assigned to local variables when manipulated in the client
     let locUnassignedTags =[];
 
@@ -33,6 +36,7 @@
         };
         locAssignedTags=locAssignedTags;
         locUnassignedTags=locUnassignedTags;
+        modified=false;
     }
     function assignTags(tag,unassign){ //move tags from Unassinged to assigned, but this is only stored locally in the client. Transmission to server is done with Save-Button
         let from,to;
@@ -43,6 +47,7 @@
         if(i>=0) from.splice(i,1);
         locAssignedTags=locAssignedTags;
         locUnassignedTags=locUnassignedTags;
+        modified=true;
     }
     function uploadAssign(){
         // this doesnt work as it deletes on client side but doesnt force the server to rebuild the page
@@ -72,26 +77,14 @@
     $:afterReload(data);
 </script>
 
-<form method="POST" action="?/create">
-    <label> add a tag:
-        <input name="id" autocomplete="off"/>
-    </label>
-</form>
-
-<ul class="todos"> All Tags
-    {#each data.todos as todo (todo.id)}
-        <li>
-            {todo.description}
-        </li>
-    {/each}
-</ul>
-
-<div><Search size="sm" autocomplete="on" bind:search/>
-    <Button size="field" iconDescription="Save" icon={SaveSVG} on:click={(e)=>{uploadAssign()}}/>
-    <Button size="field" iconDescription="Undo" icon={UndoSVG} on:click={(e)=>{revertAssign()}}/>
+<h3>Editing {data.item.name}</h3>
+<div>
+    <Button size="field" iconDescription="Back" icon={ChevronLeftSVG} href={redirectTo}/>
+    <Button disabled={!modified} size="field" iconDescription="Save" icon={SaveSVG} on:click={(e)=>{uploadAssign()}}/>
+    <Button disabled={!modified} size="field" iconDescription="Undo" icon={UndoSVG} on:click={(e)=>{revertAssign()}}/>
 </div>
 
-<div><p>All Tags</p>
+<div><p>Unassigned Tags</p><Search size="sm" autocomplete="on" bind:search/>
     {#each locUnassignedTags as tag, i }
         <Tag id={tag.id} type={tag.id} interactive on:click={(e)=>(assignTags(tag))}>{tag.id}</Tag>
     {/each}
@@ -101,13 +94,15 @@
         <Tag id={tag.id} type={tag.id} interactive on:click={(e)=>(assignTags(tag,true))}>{tag.id}</Tag>
     {/each}
 </div>
+<hr>
+<form method="POST" action="?/create">
+    <label> add a tag:
+        <input name="id" autocomplete="off"/>
+    </label>
+</form>
 <Form name="myForm" method="POST" action="?/delete" on:submit={(e)=>{validateForm(e)}}>
-    <label>
-        delete a tag:
-        <input
-            name="id"
-            autocomplete="off"
-        />
+    <label> delete a tag:
+        <input name="id" autocomplete="off" />
     </label>
 </Form>
 <Form name="myForm2" method="POST" action="?/delete" on:submit={(e)=>{validateForm(e)}} hidden>

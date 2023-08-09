@@ -12,7 +12,7 @@ import { viewHandle,settings } from './stores';
  */
 export async function loadImage(imgElement, file) {
     const myImage = document.querySelector(imgElement);
-    if(!myImage)return;
+    if(!myImage || file==='')return;
     const response = await fetch('/api?op=file&file='+encodeURIComponent(file));
     if (!response.ok) {
         throw new Error(`HTTP error, status = ${response.status}`);
