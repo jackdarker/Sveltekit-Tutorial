@@ -24,7 +24,7 @@ My understanding of tags:
 # Dependencys
 
  - For UI-components https://carbon-components-svelte.onrender.com/
- - for database sqlite3
+ - for database better-sqlite3; sqlite3 uses require which is not supported by vite
 
 
 # create-svelte

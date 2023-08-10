@@ -4,6 +4,7 @@ import {dbHandler} from "$lib/dbHandler.js";
 import {resolve as pathresolve,relative,sep,isAbsolute} from "path";
 import FS from "fs";
 import {BASEDIR,IMGDIR} from "$lib/const.js"
+import { Db2Database } from "carbon-icons-svelte";
 //const baseDir = process.cwd()+"\\static\\sub\\"; //base of homepage+subdir
 //const imgDir ="./static/art"; //"d:\\public\\_pics"; //where the files are located
 //const baseDir = process.cwd();
@@ -73,6 +74,9 @@ export function fetchData(path,params) {
       })
   });
 }
+/*------------------------------------------------*/
+const db = new dbHandler();
+db.dbInit();
 const allTags = [{id:"red"},{id:"green"},{id:"blue"}];
 const mytags = [{id:"brown"}];
 
@@ -101,22 +105,22 @@ export function assignTag(idlist){
 // In a real app, this data would live in a database,
 // rather than in memory. But for now, we cheat.
 // TODO REMOVE this->
-const db = new Map();
+const db2 = new Map();
 
 export function getTodos(userid) {
-	if (!db.get(userid)) {
-		db.set(userid, [{
+	if (!db2.get(userid)) {
+		db2.set(userid, [{
 			id: crypto.randomUUID(),
 			description: 'Learn SvelteKit',
 			done: false
 		}]);
 	}
 
-	return db.get(userid);
+	return Db2Database.get(userid);
 }
 
 export function createTodo(userid, description) {
-	const todos = db.get(userid);
+	const todos = db2.get(userid);
 
 	todos.push({
 		id: crypto.randomUUID(),
@@ -126,7 +130,7 @@ export function createTodo(userid, description) {
 }
 
 export function deleteTodo(userid, todoid) {
-	const todos = db.get(userid);
+	const todos = db2.get(userid);
 	const index = todos.findIndex((todo) => todo.id === todoid);
 
 	if (index !== -1) {

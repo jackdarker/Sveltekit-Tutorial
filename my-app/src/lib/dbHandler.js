@@ -1,0 +1,53 @@
+//const sqlite3 = require('sqlite3').verbose();
+import Database from 'better-sqlite3';
+class Tag{
+	constructor(tagID,tagName){
+		this.tagID=tagID,this.tagName=tagName;
+	}
+}
+
+const db = new Database('foobar.db');
+db.pragma('journal_mode = WAL')
+/*let db = new sqlite3.Database('./rinChan.db', (err) => {
+	if (err){
+		console.log("dbHandler::error "+err);
+	} else {
+		console.log("dbHandler::dbConnected");
+	}
+});*/
+export class dbHandler {
+	dbInit(){
+		console.log("dbHandler::dbInit::createPosts");
+		let query = `CREATE TABLE IF NOT EXISTS Posts (
+			postID INTEGER PRIMARY KEY AUTOINCREMENT, 
+			boardID TEXT NOT NULL,
+			replyToID INTEGER,
+			name TEXT NOT NULL,
+			subject TEXT,
+			dateTime TEXT,
+			postText TEXT,
+			fileName TEXT,
+			posterID TEXT NOT NULL,
+			fileExt TEXT
+		)`
+		db.exec(query);
+		console.log("dbHandler::dbInit::createBoards");
+		query = `CREATE TABLE IF NOT EXISTS Boards (
+			boardID TEXT NOT NULL PRIMARY KEY, 
+			boardName TEXT NOT NULL
+		)`
+		db.exec(query);
+		query = `CREATE TABLE IF NOT EXISTS Tags (
+			ID	INTEGER NOT NULL UNIQUE,
+			Name	TEXT,
+			PRIMARY KEY("ID" AUTOINCREMENT)
+		)`
+		db.exec(query);
+		//query = `INSERT into Boards (boardID,boardName) VALUES ('b','Random')`
+		//db.run(query);
+		//query = `INSERT into Boards (boardID,boardName) VALUES ('g','Technology')`
+		//db.run(query);
+		//query = `INSERT into Boards (boardID,boardName) VALUES ('a','Anime/Manga')`
+		//db.run(query);
+	}	
+}
