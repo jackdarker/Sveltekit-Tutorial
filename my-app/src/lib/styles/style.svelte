@@ -7,12 +7,6 @@
 </script>
 
 <style>
-bodyX {
-    margin: 0;
-    background: #eee;
-    color: #333;
-    font-family: sans-serif;
-  }
   
   main {
     padding: 1rem;

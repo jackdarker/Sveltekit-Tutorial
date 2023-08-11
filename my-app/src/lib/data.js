@@ -77,8 +77,8 @@ export function fetchData(path,params) {
 /*------------------------------------------------*/
 const db = new dbHandler();
 db.dbInit();
-const allTags = [{id:"red"},{id:"green"},{id:"blue"}];
-const mytags = [{id:"brown"}];
+const allTags = db.getTags();//[{id:"red"},{id:"green"},{id:"blue"}];
+const mytags = [];
 
 export function getAllTags() {
 	return(allTags);
@@ -116,7 +116,7 @@ export function getTodos(userid) {
 		}]);
 	}
 
-	return Db2Database.get(userid);
+	return db2.get(userid);
 }
 
 export function createTodo(userid, description) {
