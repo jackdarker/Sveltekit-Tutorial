@@ -63,7 +63,19 @@ export class dbHandler {
 		//db.exec('Update tags Set name="'+tag.name+'" Where name="'+tag.name+'";Insert into tags (name) Select "'+tag.name+'" Where (Select Changes()=0);');  this should work but we dont get rowID
 		return(rowID);
 	}
-	getTags(){
+	deleteTag(tag){
+		//#todo only delete if no one uses it, maybe mark for deletion and hide ?
+		const stmt = db.prepare('Delete from Tags where (name=?)');
+		const info = stmt.run(tag.Name);
+	}
+	/**
+	 * find tags by search-term
+	 *
+	 * @param {*} search
+	 * @return {*} 
+	 * @memberof dbHandler
+	 */
+	findTags(search){
 		let results = [];
 		const stmt = db.prepare('SELECT ID,Name FROM Tags');
 		const rows = stmt.all();

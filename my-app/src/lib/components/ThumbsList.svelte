@@ -13,6 +13,7 @@
     let current_page = 1;
     let from = 1;
     let to = 1;
+    let shown =5;
     let per_page = 1;
     let last_page = 1;
     let total = 0;
@@ -74,7 +75,7 @@
 
 {#if (design==="bottom")}
     <div class="flex-container" id="Paginator">
-    <PaginationNav bind:page={current_page} total={total} shown={5} on:change={(e)=>onpage(e.detail.page)}/> 
+    <PaginationNav bind:page={current_page} total={last_page} shown={shown} on:change={(e)=>onpage(e.detail.page)}/> 
     </div>
 {/if}
 <div class={(design==="vertical"||design==="left"||design==="right")?"grid-vertical":"grid-horizontal"}>
@@ -94,7 +95,7 @@
 </div>
 {#if (design!=="bottom")}
     <div class="flex-container" id="Paginator">
-    <PaginationNav total={total} shown={5} bind:page={current_page} on:change={(e)=>(onpage(e.detail.page))}/> 
+    <PaginationNav total={last_page} shown={shown} bind:page={current_page} on:change={(e)=>(onpage(e.detail.page))}/> 
     </div>
 {/if}
 

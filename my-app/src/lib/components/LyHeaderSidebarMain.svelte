@@ -26,7 +26,7 @@
               "sd  main main main"  1fr
               "sd ft ft ft" min-content
               / 1fr  1fr  1fr  1fr;
-    }
+        }
     }
     .wrapper2 {
     display: grid;

@@ -5,12 +5,3 @@
   */
 	import "carbon-components-svelte/css/all.css";
 </script>
-
-<style>
-  
-  main {
-    padding: 1rem;
-    margin: 2rem auto;
-    max-width: 40rem;
-  }
-</style>

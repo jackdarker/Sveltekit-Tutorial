@@ -1,11 +1,11 @@
 <script>
     import '$lib/styles/style.svelte';
     import {page} from '$app/stores'
+    import { goto } from '$app/navigation';
     import SaveSVG from "carbon-icons-svelte/lib/Save.svelte";
     import UndoSVG from "carbon-icons-svelte/lib/Undo.svelte";
     import ChevronLeftSVG from "carbon-icons-svelte/lib/ChevronLeft.svelte";
     import { Button, Tag,Form, Search  } from "carbon-components-svelte";
-
     const redirectTo = $page.url.searchParams.get('from') ||'';
     export let data;  //see page.server.js#load
 
@@ -49,7 +49,7 @@
         locUnassignedTags=locUnassignedTags;
         modified=true;
     }
-    function uploadAssign(){
+    function uploadAssign_old(){
         // this doesnt work as it deletes on client side but doesnt force the server to rebuild the page
         //for(var i=tags.length-1;i>=0;i--){
         //    if(tags[i].id===id) tags.splice[i];
@@ -60,9 +60,33 @@
             ids+=locAssignedTags[i].id+",";
         }
         ids=ids.substring(0,ids.length-1);
-        let form=document.forms["assignForm"]; //see form-node
+        let form=document.forms["assignForm"]; //see form-node with this name
         form["idlist"].value=ids;
-        form.submit();
+        form.submit();  //this forces reload of page and also replaces url with form-action
+    }
+    async function uploadAssign(){
+        let ids="";
+        for(var i=0;i<locAssignedTags.length;i++){
+            ids+=locAssignedTags[i].id+",";
+        }
+        ids=ids.substring(0,ids.length-1);
+        let formData = new FormData(document.getElementById("assignForm"));
+        formData.set('idlist', ids); //could also .append
+        let url ="?/assign";
+        let res = await fetch(url,{
+            method: 'POST',
+            body: formData,
+        });
+
+        let status = await res.status
+        let response = await res.json();
+        console.log(status);
+        if (status != 200){
+            alert(response.error);
+        } else {
+            goto(location.href, { replaceState:true,invalidateAll:true })
+            //location.reload(); this causes page to flicker because full reload
+        }
     }
     function revertAssign(){ //restore with last loaded server data
         afterReload(data)
@@ -76,7 +100,6 @@
     }
     $:afterReload(data);
 </script>
-
 <h3>Editing {data.item.name}</h3>
 <div>
     <Button size="field" iconDescription="Back" icon={ChevronLeftSVG} href={redirectTo}/>
@@ -114,6 +137,6 @@
         />
     </label>
 </Form>
-<Form name="assignForm" method="POST" action="?/assign" on:submit={(e)=>{validateForm(e)}} hidden>
+<Form name="assignForm" id="assignForm" method="POST" enctype="multipart/form-data" action="?/assign" on:submit={(e)=>{validateForm(e)}} hidden>
     <input name="idlist" autocomplete="off"/>
 </Form>

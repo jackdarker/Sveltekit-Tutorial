@@ -1,4 +1,3 @@
-
 <style lang="scss">
 	.grid {
 		gap: 0.8rem;

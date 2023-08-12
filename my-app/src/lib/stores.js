@@ -1,15 +1,16 @@
 /* different svelte-stores used in client
  */
 import { writable } from 'svelte/store';
+import { browser } from '$app/environment';
 
 function createSettings() {
 	let defaultSettings = {
 		theme:"g80",
 		animationSpeed: 'normal'
 	};
-
+	
 	const { subscribe, set, update } = writable(defaultSettings);
-
+	loadFromLocalStorage();
 	/**
 	 * @param {Settings} settings
 	 */
@@ -25,7 +26,10 @@ function createSettings() {
 
 	function loadFromLocalStorage() {
 		try {
-			const data = null;// window.localStorage.getItem('settings');	//todo window might not exist yet
+			let data = null;
+			if (browser){
+				data = window.localStorage.getItem('settings');	//todo window might not exist yet
+			}
 			if (data === null) {
 				set(defaultSettings);
 			} else {

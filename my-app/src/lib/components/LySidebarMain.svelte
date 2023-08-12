@@ -1,25 +1,35 @@
 <div class="wrapper">
-    <div class="header2"><slot name="header2" /></div>
-    <div class="sidebar"><slot name="sidebar" /></div>
-    <div class="content"><slot /></div>
-    <div class="overlay" hidden>Overlay</div>
-  </div>
+  <div class="sidebar"><slot name="sidebar" /></div>
+  <div class="content"><slot /></div>
+  <div class="footer2"><slot name=footer2/></div>
+  <div class="footer"><slot name=footer/></div>
+  <div class="overlay" hidden>Overlay</div>
+</div>
 
   <style>
-    .wrapper {
-    display: grid;
-    grid-template-columns: repeat(9, 1fr);
-    grid-auto-rows: minmax(100px, auto);
-    grid-template-areas:
-        "hd2 hd2 main main main main main main main"
-        "sd sd main main main main main main main"
-        "sd sd main main main main main main main"
-        "sd sd main main main main main main main";
-
+    .wrapper{
+      min-height: 100vh;
+      display: grid;
+      grid: "sd sd"
+            "main main"
+            "main main" 
+            "ft ft"
+            / 1fr 1fr;
+    }
+    @media (min-width: 50em) { 
+      .wrapper{
+        grid: "sd  main main main"   1fr
+              "sd  main main main"  1fr
+              "ft2 ft ft ft" min-content
+              / 1fr  1fr  1fr  1fr;
+        }
+    }
+    .footer {
+    grid-area: ft;
     }
 
-    .header2 {
-    grid-area: hd2;
+    .footer2 {
+    grid-area: ft2;
     }
 
     .content {

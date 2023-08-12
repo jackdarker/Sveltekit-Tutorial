@@ -77,18 +77,19 @@ export function fetchData(path,params) {
 /*------------------------------------------------*/
 const db = new dbHandler();
 db.dbInit();
-const allTags = db.getTags();//[{id:"red"},{id:"green"},{id:"blue"}];
+
 const mytags = [];
 
 export function getAllTags() {
-	return(allTags);
+	return(db.findTags());//[{id:"red"},{id:"green"},{id:"blue"}]
 }
 export function getMyTags() {
 	return(mytags);
 }
 export function createTag(tag){
-  let i = allTags.findIndex((e)=>{return(e.id===tag)});
-  if(i<0) allTags.push({id:tag});
+  db.createTag(tag);
+  //let i = allTags.findIndex((e)=>{return(e.id===tag)});
+  //if(i<0) allTags.push({id:tag});
 }
 export function deleteTag(tag){
   let i = allTags.findIndex((e)=>{return(e.id===tag)});

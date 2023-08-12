@@ -11,9 +11,8 @@
     } from "carbon-components-svelte";
     import { onDestroy } from 'svelte';
     import { settings } from '$lib/stores.js';
-    let theme = "white";
-    settings.loadFromLocalStorage();
-    theme = settings.theme;
+
+    let theme = "";
     const unsubscribe = settings.subscribe(value => {
         //hack: cannot use <Theme bind:{$settings.theme}}/>  ??
         theme = value.theme;

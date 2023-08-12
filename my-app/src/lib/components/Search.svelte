@@ -64,9 +64,9 @@
 
 <aside>
   <!--<p>{JSON.stringify(dirlookup)}</p>-->
-  <ContentSwitcher bind:selectedIndex>
-    <Switch text="Tags" />
-    <Switch text="Directorys" />
+  <ContentSwitcher size="sm" bind:selectedIndex>
+    <Switch title="search for tags" text="Tags" />
+    <Switch title="search directorys" text="Directorys" />
   </ContentSwitcher>
   {#if selectedIndex===0}
     <Form
