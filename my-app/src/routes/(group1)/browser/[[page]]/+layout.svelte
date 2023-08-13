@@ -41,11 +41,7 @@
         const replaceState=false;
         pageNo=_pageNo;
         //let x=$page.route.id;
-        //goto(`/`).then(()=>
-        //goto(`/browser/${pageNo}?page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
-        //  /browser?path=thumbs&page=2
         goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
-        // );
     }
     async function uploadItem(event){
         let formData = new FormData(document.getElementById("uploadItem"));
