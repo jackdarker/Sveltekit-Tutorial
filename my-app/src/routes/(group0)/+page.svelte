@@ -18,16 +18,12 @@ let files = {
 //});
 
 function dragOverHandler(ev) {
-  console.log("File(s) in drop zone");
   // Prevent default behavior (Prevent file from being opened)
   ev.preventDefault();
 }
 function dropHandler(ev) {
-  console.log("File(s) dropped");
-
   // Prevent default behavior (Prevent file from being opened)
   ev.preventDefault();
-
   if (ev.dataTransfer.items) {
     // Use DataTransferItemList interface to access the file(s)
     [...ev.dataTransfer.items].forEach((item, i) => {
@@ -46,12 +42,7 @@ function dropHandler(ev) {
 }
 </script>
 
-<div
-  id="drop_zone"
-  on:drop={dropHandler}
-  on:dragover={dragOverHandler}>
-  <p>Drag one or more files to this <i>drop zone</i>.</p>
-</div>
+<div  id="drop_zone" on:drop={dropHandler} on:dragover={dragOverHandler}>  <p>Drag one or more files to this <i>drop zone</i>.</p></div>
 <h1>home</h1>
 <p>this is the home page.</p>
 <Dropzone on:drop={handleFilesSelect} />
