@@ -15,19 +15,18 @@
     
     export let form; //is filled out when server responds on form-submision
     export let data; //see load()
-    let path="",pageNo=1; //the actual directory and page-Index
     let picturename='',pictureID=-1,mounted=false;
     function onSelectDir(detail){
         const replaceState=false;
         //console.log("select", detail)
-        pageNo=1;
-        path=encodeURIComponent(detail.id);
+        const pageNo=1;
+        const path=encodeURIComponent(detail.id);
         goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
     }
     function onthumb(e) {
         const replaceState=false;
         picturename=e.currentTarget.alt; //Todo as img.src="blob:html..." we have to use alt="../public/.." instead
-        goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+        goto(`/browser/${data.thumbs.current_page}?item=${encodeURIComponent(picturename)}&path=${data.thumbs.path}&page=${data.thumbs.current_page}`, { replaceState:replaceState,invalidateAll:true })
     }
     function loadItem(_data){
         pictureID=_data.thumbs.itemId , picturename = _data.thumbs.item;
@@ -40,9 +39,9 @@
     });
     async function routeToPage(_pageNo) {
         const replaceState=false;
-        pageNo=_pageNo;
+        const pageNo=_pageNo;
         //let x=$page.route.id;
-        goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+        goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${data.thumbs.path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
     }
     async function uploadItem(event){
         let formData = new FormData(document.getElementById("uploadItem"));
@@ -64,17 +63,19 @@
     }
     $:loadItem(data);
 </script>
+
+
 <Layout>
     <UserCtrl slot="header2"/>
     <span slot="sidebar">
         <Search onselectdir={onSelectDir}/>
-        <UploadWidget path={path}/>
+        <UploadWidget path={data.thumbs.path}/>
     </span>
     <div class="content" style="display: flex">
         <div>
             <img class="medsize" id="img" src="" alt="" on:click={()=>openWindow({fileName:picturename})}/>
             <p>({pictureID}) {picturename}</p>
-            <TagEdit data={{picturename:picturename,pictureID:pictureID, tags:data.thumbs.itemTags}}/>
+            {#if pictureID>0} <TagEdit data={{picturename:picturename,pictureID:pictureID, tags:data.thumbs.itemTags}}/> {/if}
         </div>
     </div>
     <!--{#key $page.url.pathname}-->
@@ -82,6 +83,7 @@
     <!--{/key}-->
     <slot />
 </Layout>
+
 
 <style>
     /*todo switch between fullview and fit-to-screen; how to query size?*/

@@ -11,7 +11,8 @@ export function load({ fetch,params,setHeaders,cookies,url }) {
 	};*/
 	let search = url.searchParams;
 	let item= decodeURIComponent(search.get('item')||"");
-	let itemID= db.findPost(item)[0].id;
+	let post= db.findPost(item);
+	let itemID = (post.length>0)?post[0].id : -1;
     return({todos:[],item:{id:itemID,name:item},
 		myTags:db.findPostTags(itemID),
         allTags:db.getAllTags()});

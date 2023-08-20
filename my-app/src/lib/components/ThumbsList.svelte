@@ -72,7 +72,6 @@
     });
     $: changePage(data);
 </script>
-<div>{current_page}</div>
 {#if (design==="bottom")}
     <div class="flex-container" id="Paginator">
     <PaginationNav bind:page={current_page} total={last_page} shown={shown} on:change={(e)=>onpage(e.detail.page)}/> 
