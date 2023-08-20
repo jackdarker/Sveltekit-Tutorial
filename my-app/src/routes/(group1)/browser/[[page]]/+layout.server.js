@@ -1,20 +1,24 @@
 import { error } from '@sveltejs/kit';
-import {fetchData} from '$lib/data.js';
+import * as db from '$lib/data.js';
 
 export async function load(event) {
 	//const post = posts.find((post) => post.slug === params.slug);
-    let thumbs,params=event.params||{}; 
+    let thumbs={},params=event.params||{}; 
     let search = event.url.searchParams;
     //console.log(event.locals.answer);  was created in hook.handle
     params.page = params.page ?? 1;
     params.listFiles=true;
     params.path= decodeURIComponent(search.get('path')||"");
     params.item= decodeURIComponent(search.get('item')||"");
-    await fetchData(params.path, params)
+    thumbs.item = params.item, thumbs.itemId=-1,thumbs.itemTags=[];
+    let posts = db.findPost(params.item);
+    if(posts.length>0){
+        thumbs.itemId=posts[0].id;
+        thumbs.itemTags = db.findPostTags(thumbs.itemId);
+    }
+    await db.fetchData(params.path, params)
     .then(function (response) {
-        thumbs={};
-        thumbs.item = params.item;
-        thumbs.path = response.path;
+        thumbs.path = params.path;
         thumbs.current_page = response.current_page;
         thumbs.from = response.from;
         thumbs.to = response.to;

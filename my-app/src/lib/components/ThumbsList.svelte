@@ -72,7 +72,7 @@
     });
     $: changePage(data);
 </script>
-
+<div>{current_page}</div>
 {#if (design==="bottom")}
     <div class="flex-container" id="Paginator">
     <PaginationNav bind:page={current_page} total={last_page} shown={shown} on:change={(e)=>onpage(e.detail.page)}/> 
@@ -121,7 +121,8 @@
         padding: 0.5em;
     }
     .card>img{
-        max-width: 100%;;
+        max-width: 100%;
+        max-height: 100%;
     } 
     .grid-horizontal {
         width:100%;

@@ -45,15 +45,13 @@ export function bindResizers() {
 
             switch (direction) {
                 case 'vertical':
-                    const h =
-                        ((prevSiblingHeight + dy) * 100) /
+                    const h = ((prevSiblingHeight + dy) * 100) /
                         resizer.parentNode.getBoundingClientRect().height;
                     prevSibling.style.height = `${h}%`;
                     break;
                 case 'horizontal':
                 default:
-                    const w =
-                        ((prevSiblingWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
+                    const w = ((prevSiblingWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
                     prevSibling.style.width = `${w}%`;
                     break;
             }

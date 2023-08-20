@@ -77,14 +77,19 @@ export function fetchData(path,params) {
 /*------------------------------------------------*/
 const db = new dbHandler();
 db.dbInit();
-
-const mytags = [];
-
 export function getAllTags() {
 	return(db.findTags());//[{id:"red"},{id:"green"},{id:"blue"}]
 }
-export function getMyTags() {
-	return(mytags);
+export function findPostTags(postId) {
+	return(db.findPostTags(postId));
+}
+export function findPost(postId) {
+	return(db.findPost(postId));
+}
+export function addPost(post){
+  db.createPost(post);
+  //let i = allTags.findIndex((e)=>{return(e.id===tag)});
+  //if(i<0) allTags.push({id:tag});
 }
 export function createTag(tag){
   db.createTag(tag);
@@ -92,13 +97,11 @@ export function createTag(tag){
   //if(i<0) allTags.push({id:tag});
 }
 export function deleteTag(tag){
-  let i = allTags.findIndex((e)=>{return(e.id===tag)});
-  if(i>=0) allTags.splice(i,1);
+  db.deleteTag(tag);
 }
-export function assignTag(idlist){
-  mytags.splice(0,mytags.length);
-  for(var i=0; i<idlist.length;i++){
-    mytags.push({id:idlist[i]});
+export function assignTag(postid,idlist){
+  for(var i=idlist.length-1;i>=0;i--) {
+    db.assignTagToPost(postid,idlist[i]);
   }
 }
 

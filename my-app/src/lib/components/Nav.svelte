@@ -18,14 +18,7 @@
 	  flex-wrap: wrap;
 	  justify-content: space-evenly;
 	}
-	
-	ul {
-	  margin: 0;
-	  list-style-type: none;
-	  display: flex;
-	  gap: 1rem;
-	}
-	
+		
 	a {
 		font-size: large;
 	  text-decoration:underline;

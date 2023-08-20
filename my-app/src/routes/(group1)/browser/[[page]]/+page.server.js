@@ -1,8 +1,10 @@
 import { fail,error } from '@sveltejs/kit';
 import { writeFile } from 'fs/promises';
 import {IMGDIR} from '$lib/const.js'
+import { addPost } from '$lib/data.js';
 
 export const actions = {
+    //upload picture and add to database
     upload: async (event) => {
       let { cookies, request, locals } =event;
       const data = await request.formData();
@@ -10,6 +12,7 @@ export const actions = {
       const file = data.get('file'); // this is a file-stream
       try{
         await writeFile(`${IMGDIR}/${dir}/${file.name}`, file.stream());    
+        addPost({name:file.name, fileName:`${dir}/${file.name}`});
       } catch(err) {
         throw new error(422,err.message);
          // return fail(422, {

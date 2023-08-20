@@ -11,25 +11,26 @@ export function load({ fetch,params,setHeaders,cookies,url }) {
 	};*/
 	let search = url.searchParams;
 	let item= decodeURIComponent(search.get('item')||"");
-    return({todos:[],item:{name:item},myTags:db.getMyTags(),
+	let itemID= db.findPost(item)[0].id;
+    return({todos:[],item:{id:itemID,name:item},
+		myTags:db.findPostTags(itemID),
         allTags:db.getAllTags()});
 }
 
 export const actions = {
 	create: async ({ cookies, request,url }) => {
 		const data = await request.formData();
-		db.createTag(data.get('id'));
+		db.createTag({name:data.get('id')});
 		return { success: true };
 	},
     delete: async ({ cookies, request,url }) => {
 		const data = await request.formData();
-		db.deleteTag( data.get('id'));
+		db.deleteTag( {name:data.get('id')});
 		return { success: true };
 	},
     assign: async ({ cookies, request,url }) => {
 		const data = await request.formData();
-		console.log();
-        db.assignTag(data.get('idlist').split(','));
+        db.assignTag(data.get('postid'),data.get('idlist').split(','));
 		//throw redirect(303,url.searchParams.get('redirect')||'/');
 		return { success: true };
 	}

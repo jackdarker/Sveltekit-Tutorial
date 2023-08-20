@@ -6,7 +6,7 @@
     import UndoSVG from "carbon-icons-svelte/lib/Undo.svelte";
     import ChevronLeftSVG from "carbon-icons-svelte/lib/ChevronLeft.svelte";
     import { Button, Tag,Form, Search  } from "carbon-components-svelte";
-    const redirectTo = $page.url.searchParams.get('from') ||'';
+    const redirectTo = decodeURIComponent($page.url.searchParams.get('from') ||'');
     export let data;  //see page.server.js#load
 
     let search = "",modified=false;
@@ -72,6 +72,7 @@
         ids=ids.substring(0,ids.length-1);
         let formData = new FormData(document.getElementById("assignForm"));
         formData.set('idlist', ids); //could also .append
+        formData.append('postid',data.item.id);
         let url ="?/assign";
         let res = await fetch(url,{
             method: 'POST',
@@ -109,12 +110,12 @@
 
 <div><p>Unassigned Tags</p><Search size="sm" autocomplete="on" bind:search/>
     {#each locUnassignedTags as tag, i }
-        <Tag id={tag.id} type={tag.id} interactive on:click={(e)=>(assignTags(tag))}>{tag.id}</Tag>
+        <Tag id={tag.id} type={tag.name} interactive on:click={(e)=>(assignTags(tag))}>{tag.name}</Tag>
     {/each}
 </div>
 <div><p>Assigned Tags</p>
     {#each locAssignedTags as tag, i }
-        <Tag id={tag.id} type={tag.id} interactive on:click={(e)=>(assignTags(tag,true))}>{tag.id}</Tag>
+        <Tag id={tag.id} type={tag.name} interactive on:click={(e)=>(assignTags(tag,true))}>{tag.name}</Tag>
     {/each}
 </div>
 <hr>
@@ -131,10 +132,7 @@
 <Form name="myForm2" method="POST" action="?/delete" on:submit={(e)=>{validateForm(e)}} hidden>
     <label>
         delete a tag:
-        <input
-            name="id"
-            autocomplete="off"
-        />
+        <input name="id"  autocomplete="off" />
     </label>
 </Form>
 <Form name="assignForm" id="assignForm" method="POST" enctype="multipart/form-data" action="?/assign" on:submit={(e)=>{validateForm(e)}} hidden>
