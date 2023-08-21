@@ -80,6 +80,9 @@ db.dbInit();
 export function getAllTags() {
 	return(db.findTags());//[{id:"red"},{id:"green"},{id:"blue"}]
 }
+export function findTagGroups() {
+	return(db.findTagGroups());
+}
 export function findPostTags(postId) {
 	return(db.findPostTags(postId));
 }

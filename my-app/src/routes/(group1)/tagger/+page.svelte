@@ -5,7 +5,7 @@
     import SaveSVG from "carbon-icons-svelte/lib/Save.svelte";
     import UndoSVG from "carbon-icons-svelte/lib/Undo.svelte";
     import ChevronLeftSVG from "carbon-icons-svelte/lib/ChevronLeft.svelte";
-    import { Button, Tag,Form, Search  } from "carbon-components-svelte";
+    import { Button, Tag,Form, TextInput, Search, Select, SelectItem } from "carbon-components-svelte";
     const redirectTo = decodeURIComponent($page.url.searchParams.get('from') ||'');
     export let data;  //see page.server.js#load
 
@@ -107,28 +107,37 @@
     <Button disabled={!modified} size="field" iconDescription="Save" icon={SaveSVG} on:click={(e)=>{uploadAssign()}}/>
     <Button disabled={!modified} size="field" iconDescription="Undo" icon={UndoSVG} on:click={(e)=>{revertAssign()}}/>
 </div>
-
+<div class="myForm">
 <div><p>Unassigned Tags</p><Search size="sm" autocomplete="on" bind:search/>
     {#each locUnassignedTags as tag, i }
-        <Tag id={tag.id} type={tag.name} interactive on:click={(e)=>(assignTags(tag))}>{tag.name}</Tag>
+        <Tag id={tag.id} type={tag.color} interactive on:click={(e)=>(assignTags(tag))}>{tag.name}</Tag>
     {/each}
-</div>
+</div></div>
+<div class="myForm">
 <div><p>Assigned Tags</p>
     {#each locAssignedTags as tag, i }
-        <Tag id={tag.id} type={tag.name} interactive on:click={(e)=>(assignTags(tag,true))}>{tag.name}</Tag>
+        <Tag id={tag.id} type={tag.color} interactive on:click={(e)=>(assignTags(tag,true))}>{tag.name}</Tag>
     {/each}
 </div>
-<hr>
-<form method="POST" action="?/create">
-    <label> add a tag:
-        <input name="id" autocomplete="off"/>
+</div>
+<div class="myForm">
+<Form  method="POST" action="?/create">
+    <label > create/modify a tag:
+        <TextInput name="id" autocomplete="off"/>
+        <Select inline="true" name="group">
+            {#each data.tagGroups as group, i}
+                <SelectItem value={group.id} text={group.name} />
+            {/each}
+        </Select>
+        <input type="submit" />
     </label>
-</form>
+</Form></div>
+<div class="myForm">
 <Form name="myForm" method="POST" action="?/delete" on:submit={(e)=>{validateForm(e)}}>
     <label> delete a tag:
-        <input name="id" autocomplete="off" />
+        <TextInput name="id" autocomplete="off" /><input type="submit" />
     </label>
-</Form>
+</Form></div>
 <Form name="myForm2" method="POST" action="?/delete" on:submit={(e)=>{validateForm(e)}} hidden>
     <label>
         delete a tag:
@@ -138,3 +147,12 @@
 <Form name="assignForm" id="assignForm" method="POST" enctype="multipart/form-data" action="?/assign" on:submit={(e)=>{validateForm(e)}} hidden>
     <input name="idlist" autocomplete="off"/>
 </Form>
+
+<style>
+    .myForm {
+        margin: 0.5em;
+        padding: 0.5em;
+        border-style: solid;
+        border-width: 2px;
+    }
+</style>

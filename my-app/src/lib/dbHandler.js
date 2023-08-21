@@ -1,12 +1,14 @@
 //const sqlite3 = require('sqlite3').verbose();
 import Database from 'better-sqlite3';
+import { DATABASE as db_file } from '$env/static/private';
+import { redirect } from '@sveltejs/kit';
 class Tag{
 	constructor(tagID,tagName){
 		this.ID=tagID,this.Name=tagName;
 	}
 }
-
-const db = new Database('foobar.db');
+//console.log(db_file);  TODO switch db between production & dev
+const db =new Database('foobar.db');
 db.pragma('journal_mode = WAL')
 /*let db = new sqlite3.Database('./rinChan.db', (err) => {
 	if (err){
@@ -47,6 +49,16 @@ export class dbHandler {
 			Name	TEXT			
 		)`
 		db.exec(query);
+		query = `CREATE TABLE IF NOT EXISTS TagGroups (
+			ID	INTEGER PRIMARY KEY AUTOINCREMENT,
+			Name	TEXT,
+			Color	TEXT			
+		)`
+		db.exec(query);
+		this.createTagGroup({name:"gray",color:"gray"});
+		this.createTagGroup({name:"red",color:"red"});
+		this.createTagGroup({name:"blue",color:"blue"});
+		this.createTagGroup({name:"green",color:"green"});
 		//this.createTag({Name:'brown'});
 		//query = `INSERT into Boards (boardID,boardName) VALUES ('b','Random')`
 		//db.run(query);
@@ -54,14 +66,36 @@ export class dbHandler {
 		//db.run(query);
 		//query = `INSERT into Boards (boardID,boardName) VALUES ('a','Anime/Manga')`
 		//db.run(query);
-	}	
-	createTag(tag){
-		const stmt = db.prepare('Update Tags SET name=? where (name=?)');
-		let info = stmt.run(tag.name,tag.name);
+	}
+	createTagGroup(group){
+		const stmt = db.prepare('Update TagGroups SET name=?,Color=? where (name=?)');
+		let info = stmt.run(group.name,group.color,group.name);
 		let rowID=-1;
 		if(info.changes<=0) {
-			const stmt2 = db.prepare('Insert Into Tags (name,GroupID) VALUES(?,0)');
-			const info = stmt2.run(tag.name);
+			const stmt2 = db.prepare('Insert Into TagGroups (name,Color) VALUES(?,?)');
+			const info = stmt2.run(group.name,group.color);
+			rowID = (info.changes<=0)?-1:info.lastInsertRowid;
+		} 
+		return(rowID);
+	}	
+	findTagGroups(){
+		let results = [];
+		const stmt = db.prepare('SELECT ID,Name,Color FROM TagGroups');
+		const rows = stmt.all();
+		rows.forEach((row)=>{				
+			//results.push(new Tag(row.ID,row.Name));   classes not compatible with devalue?
+			results.push({ id:row.ID, name: row.Name, color: row.Color});
+		});
+		return(results);
+	}
+	createTag(tag){
+		tag.groupid = tag.groupid ||1;
+		const stmt = db.prepare('Update Tags SET name=?, groupID=? where (name=?)');
+		let info = stmt.run(tag.name,tag.groupid,tag.name);
+		let rowID=-1;
+		if(info.changes<=0) {
+			const stmt2 = db.prepare('Insert Into Tags (name,GroupID) VALUES(?,?)');
+			const info = stmt2.run(tag.name,tag.groupid);
 			rowID = (info.changes<=0)?-1:info.lastInsertRowid;
 		} 
 		//db.exec('Update tags Set name="'+tag.name+'" Where name="'+tag.name+'";Insert into tags (name) Select "'+tag.name+'" Where (Select Changes()=0);');  this should work but we dont get rowID
@@ -81,11 +115,11 @@ export class dbHandler {
 	 */
 	findTags(search){
 		let results = [];
-		const stmt = db.prepare('SELECT ID,Name FROM Tags');
+		const stmt = db.prepare('SELECT Tags.ID,Tags.Name, TagGroups.ID as GroupID, TagGroups.Color FROM Tags left join TagGroups on Tags.GroupID=TagGroups.ID');
 		const rows = stmt.all();
 		rows.forEach((row)=>{				
 			//results.push(new Tag(row.ID,row.Name));   classes not compatible with devalue?
-			results.push({ id:row.ID, name: row.Name});
+			results.push({ id:row.ID, name: row.Name, groupid:row.GroupID, color:row.Color});
 		});
 		return(results);
 	}

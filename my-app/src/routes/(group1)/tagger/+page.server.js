@@ -14,6 +14,7 @@ export function load({ fetch,params,setHeaders,cookies,url }) {
 	let post= db.findPost(item);
 	let itemID = (post.length>0)?post[0].id : -1;
     return({todos:[],item:{id:itemID,name:item},
+		tagGroups: db.findTagGroups(),
 		myTags:db.findPostTags(itemID),
         allTags:db.getAllTags()});
 }
@@ -21,7 +22,7 @@ export function load({ fetch,params,setHeaders,cookies,url }) {
 export const actions = {
 	create: async ({ cookies, request,url }) => {
 		const data = await request.formData();
-		db.createTag({name:data.get('id')});
+		db.createTag({name:data.get('id'),groupid:data.get('group')});
 		return { success: true };
 	},
     delete: async ({ cookies, request,url }) => {
