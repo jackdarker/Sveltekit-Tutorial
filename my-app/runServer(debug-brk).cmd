@@ -1,1 +1,1 @@
-node --inspect-brk .\node_modules\vite\bin\vite.js
+node --inspect-brk .\node_modules\vite\bin\vite.js --host

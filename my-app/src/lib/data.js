@@ -103,9 +103,7 @@ export function deleteTag(tag){
   db.deleteTag(tag);
 }
 export function assignTag(postid,idlist){
-  for(var i=idlist.length-1;i>=0;i--) {
-    db.assignTagToPost(postid,idlist[i]);
-  }
+    db.assignTagToPost(postid,idlist);
 }
 
 /*++++++++++++++++++++++++++++++++++++++++++++++*/

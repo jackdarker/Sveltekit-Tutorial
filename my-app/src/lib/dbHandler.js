@@ -125,11 +125,14 @@ export class dbHandler {
 	}
 	findPostTags(postId){
 		let results = [];
-		const stmt = db.prepare('SELECT Tags.ID,Tags.Name FROM Tags inner join PostTags on Tags.ID=PostTags.tagId WHERE PostTags.postID=?');
+		const stmt = db.prepare('SELECT Tags.ID,Tags.Name, TagGroups.ID as GroupID, TagGroups.Color FROM Tags '+ 
+			'inner join PostTags on Tags.ID=PostTags.tagId '+
+			'left join TagGroups on Tags.GroupID=TagGroups.ID '+
+			'WHERE PostTags.postID=? ');
 		const rows = stmt.all(postId);
 		rows.forEach((row)=>{				
 			//results.push(new Tag(row.ID,row.Name));   classes not compatible with devalue?
-			results.push({ id:row.ID, name: row.Name});
+			results.push({ id:row.ID, name: row.Name, groupid:row.GroupID, color:row.Color});
 		});
 		return(results);
 	}
@@ -155,14 +158,21 @@ export class dbHandler {
 		});
 		return(results);
 	}
-	assignTagToPost(postid,tagid){
-		let info ;
+	/**
+	 * assign tags to post and remove others
+	 *
+	 * @param {*} postid
+	 * @param {*} tagids
+	 * @memberof dbHandler
+	 */
+	assignTagToPost(postid,tagids){
+		let info, x = tagids.join(',');
+		const stmt1 = db.prepare('Delete From PostTags  Where postID=? AND tagId NOT IN(?)');
+		info = stmt1.run(postid,x);
+
 		const stmt2 = db.prepare('Insert Into PostTags (postID,tagId) VALUES(?,?)');
-		info = stmt2.run(postid, tagid); //will skip on conflict
-	}
-	unassignTagToPost(postid,tag){
-		let info ;
-		const stmt2 = db.prepare('Delete From PostTags  Where postID=? AND tagId=?');
-		info = stmt2.run(post.ID, tag.ID);
+		for(var i=tagids.length-1;i>=0;i--) {
+			info = stmt2.run(postid, tagids[i]); //will skip on conflict
+		}
 	}
 }
