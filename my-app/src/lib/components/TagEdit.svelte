@@ -8,6 +8,8 @@
 
     let tags =[{id:"red"},{id:"green"},{id:"blue"}];
 </script>
+
+
 <div class="content"><Button icon={TagEditSVG} iconDescription="Edit tags" size="field" href={"/tagger?item="+encodeURIComponent(data.picturename)+"&from="+encodeURIComponent($page.url)}/>
     {#each data.tags as tag, i }
         <Tag id={tag.id} type={tag.color} >{tag.name}</Tag>

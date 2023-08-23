@@ -16,14 +16,14 @@
             // If dropped items aren't files, reject them
             if (item.kind === "file") {
                 _file = item.getAsFile();
-                console.log(`… file[${i}].name = ${file.name}`);
+                //console.log(`… file[${i}].name = ${file.name}`);
             }
             });
         } else {
             // Use DataTransfer interface to access the file(s)
             [...ev.dataTransfer.files].forEach((file, i) => {
                 _file=file;
-            console.log(`… file[${i}].name = ${file.name}`);
+                //console.log(`… file[${i}].name = ${file.name}`);
             });
         }
         let formData = new FormData(document.getElementById("uploadItem"));

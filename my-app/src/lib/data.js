@@ -11,7 +11,13 @@ import { Db2Database } from "carbon-icons-svelte";
 //const imgDir = pathresolve(baseDir+"\\..\\public\\"); //Todo
 //let data = [];
 
-
+/**
+ * walks a directory tree and returns a list of dirs/files depending on listDirs/listFiles
+ *
+ * @param {*} abspath
+ * @param {*} params
+ * @return {*} 
+ */
 async function processDirectory(abspath,params) {
   const listDirs = params.listDirs || false;
   const listFiles = params.listFiles || false;
@@ -74,6 +80,72 @@ export function fetchData(path,params) {
       })
   });
 }
+/*------------------------------------------------*/
+/**
+ * imports all images from a directory into database
+ *
+ * @export
+ * @param {*} path
+ */
+export function importDir(path){
+  const params={};
+  params.listDirs= false, params.listFiles=true;
+  const fullpath = isAbsolute(path)?path:pathresolve(IMGDIR,path);
+  let total=0;
+  return new Promise((resolve, reject) => {
+    processDirectory(fullpath,params).then(
+      (data)=>{  
+        for(var i = data.length-1;i>=0;i--) {
+          let post = {name:data[i].name, fileName:data[i].url};
+          console.log(JSON.stringify(post));
+          //db.createPost(post);
+        }
+        total = data.length;
+        resolve({
+          'total': total
+        });
+      })
+  });
+}
+
+export function importDirRecursive(path){
+  const recursive=true;
+  let pathstack = [path];
+  let total=0;
+  function foo(){
+    return new Promise((resolve, reject) => {
+      let _path = pathstack.shift();
+      _path = isAbsolute(_path)?_path:pathresolve(IMGDIR,_path);
+      //get files from dir and process
+      processDirectory(_path,{listDirs: false, listFiles: true}).then(
+        (data)=>{  
+          for(var i = data.length-1;i>=0;i--) {
+            let post = {name:data[i].name, fileName:data[i].url};
+            console.log(JSON.stringify(post));
+            //db.createPost(post);
+          }
+          total += data.length;
+        }).then(()=>{
+          //get dirs in dir and push to stack
+          processDirectory(_path,{listDirs: true, listFiles: false}).then(
+            (data)=>{  
+              for(var i = data.length-1;i>=0;i--) {
+                console.log(data[i].url);
+                pathstack.push(data[i].url)
+              }
+            }).then(()=>{
+              //return if nothing more to process
+              if(pathstack.length<=0) resolve({'total': total});
+              else foo().then(()=>{resolve({'total': total})});
+            });        
+          })
+        });
+  }
+  return(foo());
+}
+
+
+
 /*------------------------------------------------*/
 const db = new dbHandler();
 db.dbInit();

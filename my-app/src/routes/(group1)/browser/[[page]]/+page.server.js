@@ -1,7 +1,7 @@
 import { fail,error } from '@sveltejs/kit';
 import { writeFile } from 'fs/promises';
 import {IMGDIR} from '$lib/const.js'
-import { addPost } from '$lib/data.js';
+import { addPost,importDir, importDirRecursive } from '$lib/data.js';
 
 export const actions = {
     //upload picture and add to database
@@ -21,5 +21,19 @@ export const actions = {
          // });  this only works if form-submit is used but not with fetch?
       }
       return { success: true };
+    },
+    //import exisiting Directory of images
+    import: async (event) => {
+      let { cookies, request, locals } =event;
+      const data = await request.formData();
+      const dir = decodeURIComponent(data.get("dir"));
+      let res, params = {recursive: data.get("recursive")|| false};
+      try{
+        res= await importDirRecursive(`${IMGDIR}/${dir}`); 
+      } catch(err) {
+        throw new error(422,err.message);
+      }
+      return { success: true, message: JSON.stringify(res) };
     }
+    
   };
