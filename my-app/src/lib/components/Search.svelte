@@ -6,17 +6,20 @@
   import { onMount,afterUpdate } from 'svelte';
   import {loadDirectory} from '$lib/webutils.js'
   export let onselectdir=_onselectdir;
+  export let onsearch=_onsearch;
   let activeId = "";
   let mounted=false;
   let selectedIds = [];
   let children = [];
   let dirlookup={}, nodesToLoad=[];
-  let _loadingNode=null;
   let selectedIndex = 0;
   let searchterm="";
 
   function _onselectdir(detail){
     console.log("select", detail)
+  }
+  function _onsearch(detail){
+    console.log("search", detail)
   }
   function updateDirTree(dirtree,updateID) {    
     let node;
@@ -46,8 +49,7 @@
     .catch(error => {
         console.error(error);
     })
-    .finally(() => {
-    });
+    .finally(() => {});
   }
   afterUpdate(() => {
     //loadDir();  dont call or creates loop
@@ -59,7 +61,6 @@
     });
   //$: updateDirTree(dirtree);
   
-  
 </script>
 
 <aside>
@@ -69,23 +70,14 @@
     <Switch title="search directorys" text="Directorys" />
   </ContentSwitcher>
   {#if selectedIndex===0}
-    <Form
-    on:submit={(e) => {
+    <Form on:submit={(e) => {
         e.preventDefault();
-        console.log("submit", e);
-    }}
-    >
+        onsearch(searchterm);
+    }}>
     <Search bind:value={searchterm} placeholder="Search catalog..." />
-    <Checkbox id="checkbox-0" labelText="Checkbox Label" checked />
-    <Button type="submit">Submit</Button>
     </Form>
   {:else}
-    <Form
-    on:submit={(e) => {
-        e.preventDefault();
-        console.log("submit", e);
-    }}
-    >
+    <Form on:submit={(e) => {e.preventDefault();}}>
     <TreeView {children} bind:activeId  bind:selectedIds
       on:select={({ detail }) => {detail.id=(detail.id==="ROOT")?"":detail.id;onselectdir(detail);}}
     />

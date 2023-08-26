@@ -1,14 +1,14 @@
 //const sqlite3 = require('sqlite3').verbose();
 import Database from 'better-sqlite3';
-import { DATABASE as db_file } from '$env/static/private';
+import {IMGDIR, DATABASE} from "$lib/const.js"
 import { redirect } from '@sveltejs/kit';
 class Tag{
 	constructor(tagID,tagName){
 		this.ID=tagID,this.Name=tagName;
 	}
 }
-//console.log(db_file);  TODO switch db between production & dev
-const db =new Database('foobar.db');
+console.log("opening "+DATABASE);  //TODO switch db between production & dev
+const db =new Database(DATABASE);
 db.pragma('journal_mode = WAL')
 /*let db = new sqlite3.Database('./rinChan.db', (err) => {
 	if (err){
@@ -148,6 +148,21 @@ export class dbHandler {
 		} 
 		return(rowID);
 	}
+	getPost(postID){
+		let results = [];
+		const stmt = db.prepare('SELECT boardID,postID,name,fileName FROM Posts Where postID=?');
+		const rows = stmt.all(postID);
+		rows.forEach((row)=>{
+			results.push({ id: row.postID, fileName:row.fileName, name:row.name});
+		});
+		return(results);
+	}
+	/**
+	 *	
+	 * @param {*} search: relative path+name
+	 * @return {*} 
+	 * @memberof dbHandler
+	 */
 	findPost(search){
 		let results = [];
 		const stmt = db.prepare('SELECT boardID,postID,name,fileName FROM Posts Where fileName=?');
@@ -155,6 +170,24 @@ export class dbHandler {
 		rows.forEach((row)=>{				
 			//results.push(new Tag(row.ID,row.Name));   classes not compatible with devalue?
 			results.push({ id: row.postID, fileName:row.fileName, name:row.name});
+		});
+		return(results);
+	}
+	/**
+	 * Note: the search term has to match exactly
+	 *
+	 * @param {*} search: is either an array or a commaseparated string containing tags
+	 * @return {*} 
+	 * @memberof dbHandler
+	 */
+	findPostByTag(search){
+		let results = [];
+		const stmt = db.prepare('select distinct Posts.postID from Posts inner join PostTags on Posts.postID=PostTags.postID inner join Tags on Tags.ID=PostTags.tagID where Tags.name IN(?)');
+		/*select distinct Posts.postID from Posts inner join PostTags on Posts.postID=PostTags.postID inner join Tags on Tags.ID=PostTags.tagID where Tags.name Like("%now%") */   //IN("now","snow")
+		const rows = stmt.all(search);
+		rows.forEach((row)=>{				
+			//results.push(new Tag(row.ID,row.Name));   classes not compatible with devalue?
+			results=[...results,...this.getPost(row.postID)];
 		});
 		return(results);
 	}

@@ -1,1 +1,1 @@
-npm run dev
+node -r dotenv/config build

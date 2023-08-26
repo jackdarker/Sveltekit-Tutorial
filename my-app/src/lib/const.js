@@ -1,3 +1,4 @@
-export const BASEDIR="D:/Projects/HTML/Sveltekit-Tutorial/my-app/";
-export const IMGDIR="D:/Projects/HTML/Sveltekit-Tutorial/public/";
-export const SERVERURL="http://localhost:5173";
+import { DATABASE as db_file, IMGDIR as imgdir } from '$env/static/private';
+
+export const IMGDIR=imgdir;
+export const DATABASE=db_file;

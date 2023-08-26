@@ -10,12 +10,14 @@ export async function load(event) {
     params.listFiles=true;
     params.path= decodeURIComponent(search.get('path')||"");
     params.item= decodeURIComponent(search.get('item')||"");
+    params.search= search.get('search');
     thumbs.item = params.item, thumbs.itemId=-1,thumbs.itemTags=[];
     let posts = db.findPost(params.item);
     if(posts.length>0){
         thumbs.itemId=posts[0].id;
         thumbs.itemTags = db.findPostTags(thumbs.itemId);
     }
+    
     await db.fetchData(params.path, params)
     .then(function (response) {
         thumbs.path = params.path;

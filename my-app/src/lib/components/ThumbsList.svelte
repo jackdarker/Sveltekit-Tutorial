@@ -55,7 +55,7 @@
         for(var i=0;(mounted && (i<per_page));i++){
             let row=rows[i];
             if(row && !row.isDir){ //Todo placeholderimg for dirs
-                loadImage('#img'+i,rows[i].url);
+                loadImage('#img'+i,rows[i].fileName);
             }
         }
     }
@@ -84,9 +84,9 @@
         
         {#each rows as row, i}
         <div class="card">
-            <img id={"img"+i} src="" alt="{row.url}" on:click={row.isDir?null:onclick}/>
+            <img id={"img"+i} src="" alt="{row.fileName}" on:click={row.isDir?null:onclick}/>
             <p>{row.name}</p>
-            <!--<ImageView url={row.url} name={row.name} onclick={onclick}/>-->
+            <!--<ImageView url={row.fileName} name={row.name} onclick={onclick}/>-->
         </div>
         {:else}
                 <h5 class="text-center">no results</h5>

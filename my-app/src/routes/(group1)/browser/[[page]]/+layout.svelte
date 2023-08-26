@@ -2,7 +2,9 @@
     import { onMount } from 'svelte';
 	import '$lib/styles/style.svelte';
     import TagEditSVG from "carbon-icons-svelte/lib/TagEdit.svelte";
-    import { ExpandableTile ,Checkbox, Form, TextInput,Button,Tooltip  } from "carbon-components-svelte";
+    import { ExpandableTile ,Checkbox, Form, TextInput,Button,Tooltip ,InlineNotification  } from "carbon-components-svelte";
+    import { fly, slide } from 'svelte/transition';
+	import { enhance } from '$app/forms';
     import Search from '$lib/components/Search.svelte';
     import UploadWidget from '$lib/components/UploadWidget.svelte'
     import Layout from '$lib/components/LyHeaderSidebarMain.svelte';
@@ -15,6 +17,7 @@
     
     export let form; //is filled out when server responds on form-submision
     export let data; //see load()
+    let importing = false;
     let picturename='',pictureID=-1,mounted=false;
     function onSelectDir(detail){
         const replaceState=false;
@@ -22,6 +25,12 @@
         const pageNo=1;
         const path=encodeURIComponent(detail.id);
         goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+    }
+    function onSearch(detail){
+        const replaceState=false;
+        console.log("search", detail)
+        const pageNo=1;
+        goto(`/browser/${pageNo}?search=${detail}&path=${data.thumbs.path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
     }
     function onthumb(e) {
         const replaceState=false;
@@ -49,20 +58,26 @@
 
 <Layout>
     <!--{#if $page.form?.success}
-        <p>{$page.form.message}</p>
+        <InlineNotification  kind="warning"  title=""  subtitle="{$page.form.message}"/>
     {/if}-->
     <UserCtrl slot="header2"/>
     <span slot="sidebar">
-        <Search onselectdir={onSelectDir}/>
+        <Search onselectdir={onSelectDir} onsearch={onSearch}/>
+        {#if importing===true}
+        <p>importing...</p>
+        {:else }
         <ExpandableTile ><div slot="above">Import files...</div>
             <div slot="below">
             <UploadWidget path={data.thumbs.path}/> <p> or import existing files from...</p>
-            <Form id="import" action="?/import" method="post" enctype="multipart/form-data" >
+            <form id="import" action="?/import" method="post" enctype="multipart/form-data"  
+                on:submit={(e) => { /*e.preventDefault(); */ }} 
+                use:enhance={({ formElement, formData, action, cancel }) => { importing = true; return async ({ result, update }) => { await update(); importing = false; alert("import done: "+result.data.message); }; }}>
+                <Button size="field" type="submit" disabled={importing}>import Dir</Button><Checkbox name="recursive" labelText="recursive" />
                 <TextInput name="dir" autocomplete="off" value="{data.thumbs.path}" readonly="true"/>
-                <Checkbox name="recursive" labelText="recursive" /><Button size="field" type="submit">import Dir</Button>
-            </Form>
+            </form>
         </div>
         </ExpandableTile >
+        {/if}
     </span>
     <div class="content" style="display: flex">
         <div>

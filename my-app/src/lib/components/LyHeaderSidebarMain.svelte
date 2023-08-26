@@ -19,7 +19,7 @@
             "ft ft"
             / 1fr 1fr;
     }
-    @media (min-width: 50em) { 
+    @media (min-width: 40em) { 
       .wrapper{
         grid: "hd2 hd2 hd hd" 50px
               "sd  main main main"   1fr

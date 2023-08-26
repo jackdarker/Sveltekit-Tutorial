@@ -3,13 +3,10 @@
 import {dbHandler} from "$lib/dbHandler.js";
 import {resolve as pathresolve,relative,sep,isAbsolute} from "path";
 import FS from "fs";
-import {BASEDIR,IMGDIR} from "$lib/const.js"
+import {IMGDIR} from "$lib/const.js"
 import { Db2Database } from "carbon-icons-svelte";
-//const baseDir = process.cwd()+"\\static\\sub\\"; //base of homepage+subdir
-//const imgDir ="./static/art"; //"d:\\public\\_pics"; //where the files are located
 //const baseDir = process.cwd();
 //const imgDir = pathresolve(baseDir+"\\..\\public\\"); //Todo
-//let data = [];
 
 /**
  * walks a directory tree and returns a list of dirs/files depending on listDirs/listFiles
@@ -39,7 +36,7 @@ async function processDirectory(abspath,params) {
       //await onFileRead(files[i],data);
       //console.log(files[i]);
       if((isDir && listDirs) || (!isDir && listFiles)) {
-        data.push({id:(i+1),name:entry.name,url:baseurl+entry.name,isDir:isDir});
+        data.push({id:(i+1),name:entry.name,fileName:baseurl+entry.name,isDir:isDir});
       }
   } 
   return(data);
@@ -59,26 +56,45 @@ export function fetchData(path,params) {
   const fullpath = isAbsolute(path)?path:pathresolve(IMGDIR,path);
   let total,from,to,last_page;
   let slice=[];
-
-  return new Promise((resolve, reject) => {
-    processDirectory(fullpath,params).then(
-      (data)=>{  total = data.length;
-        last_page = Math.ceil(total / per_page);
-        from = (page - 1) * per_page;
-        to = page * per_page;
-        slice = data.slice(from, to);
-        //console.log(slice.length);
-        resolve({
-          'total': total,
-          'per_page': per_page,
-          'current_page': page,
-          'last_page': last_page,
-          'from': from,
-          'to': to,
-          'data': slice
-        });
-      })
-  });
+  //if there is no search, display directory
+  if(!params.search) {
+    return new Promise((resolve, reject) => {
+      processDirectory(fullpath,params).then(
+        (data)=>{  total = data.length;
+          last_page = Math.ceil(total / per_page);
+          from = (page - 1) * per_page;
+          to = page * per_page;
+          slice = data.slice(from, to);
+          resolve({
+            'total': total,
+            'per_page': per_page,
+            'current_page': page,
+            'last_page': last_page,
+            'from': from,
+            'to': to,
+            'data': slice
+          });
+        })
+    });
+  } else {
+    return new Promise((resolve, reject) => {
+      let data = db.findPostByTag(params.search);
+      total = data.length;
+      last_page = Math.ceil(total / per_page);
+      from = (page - 1) * per_page;
+      to = page * per_page;
+      slice = data.slice(from, to);
+      resolve({
+        'total': total,
+        'per_page': per_page,
+        'current_page': page,
+        'last_page': last_page,
+        'from': from,
+        'to': to,
+        'data': slice
+      });
+    });
+  }
 }
 /*------------------------------------------------*/
 /**
@@ -96,7 +112,7 @@ export function importDir(path){
     processDirectory(fullpath,params).then(
       (data)=>{  
         for(var i = data.length-1;i>=0;i--) {
-          let post = {name:data[i].name, fileName:data[i].url};
+          let post = {name:data[i].name, fileName:data[i].fileName};
           console.log(JSON.stringify(post));
           //db.createPost(post);
         }
@@ -120,9 +136,9 @@ export function importDirRecursive(path){
       processDirectory(_path,{listDirs: false, listFiles: true}).then(
         (data)=>{  
           for(var i = data.length-1;i>=0;i--) {
-            let post = {name:data[i].name, fileName:data[i].url};
-            console.log(JSON.stringify(post));
-            //db.createPost(post);
+            let post = {name:data[i].name, fileName:data[i].fileName};
+            //console.log(JSON.stringify(post));
+            db.createPost(post);
           }
           total += data.length;
         }).then(()=>{
@@ -130,8 +146,8 @@ export function importDirRecursive(path){
           processDirectory(_path,{listDirs: true, listFiles: false}).then(
             (data)=>{  
               for(var i = data.length-1;i>=0;i--) {
-                console.log(data[i].url);
-                pathstack.push(data[i].url)
+                //console.log(data[i].fileName);
+                pathstack.push(data[i].fileName)
               }
             }).then(()=>{
               //return if nothing more to process
@@ -158,8 +174,11 @@ export function findTagGroups() {
 export function findPostTags(postId) {
 	return(db.findPostTags(postId));
 }
-export function findPost(postId) {
-	return(db.findPost(postId));
+export function findPost(search) {
+	return(db.findPost(search));
+}
+export function findPostByTag(search) {
+  return(db.findPostByTag(search));
 }
 export function addPost(post){
   db.createPost(post);

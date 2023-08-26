@@ -3,7 +3,6 @@ import {promises as fs} from "fs";
 import {resolve as pathresolve,normalize,relative,sep,isAbsolute} from "path";
 import {IMGDIR} from '$lib/const.js'
 import {fetchData} from '$lib/data.js';
-//const IMGDIR="D:/Projects/HTML/Sveltekit-Tutorial/public/";
 /**
  * verifys that path expands to "public" directory, throws error if not
  * 
@@ -48,7 +47,7 @@ export async function GET(request) {
       const asset = await fetchData(path, {listDirs:true,listFiles:false,per_page:9999});
       let dirs=[];
       for(var i=0;i<asset.data.length;i++){
-        dirs.push({id:asset.data[i].url,text:asset.data[i].name})
+        dirs.push({id:asset.data[i].fileName,text:asset.data[i].name})
       }
       return Response.json({dirs:dirs});
     }

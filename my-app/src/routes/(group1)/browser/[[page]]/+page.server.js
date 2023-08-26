@@ -27,7 +27,7 @@ export const actions = {
       let { cookies, request, locals } =event;
       const data = await request.formData();
       const dir = decodeURIComponent(data.get("dir"));
-      let res, params = {recursive: data.get("recursive")|| false};
+      let res, params = {recursive: data.get("recursive")|| false}; //TODO get queries only value but not selected?
       try{
         res= await importDirRecursive(`${IMGDIR}/${dir}`); 
       } catch(err) {
