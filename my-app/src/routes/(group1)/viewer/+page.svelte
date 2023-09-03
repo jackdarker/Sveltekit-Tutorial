@@ -1,5 +1,6 @@
 <script>
     import '$lib/styles/style.svelte';
+    import {page} from '$app/stores'
     import { Loading } from "carbon-components-svelte";
     import UserCtrl from '$lib/components/UserCtrlWidget.svelte'
     import Layout from '$lib/components/LySidebarMain.svelte';
@@ -12,17 +13,22 @@
     "subject": "gthaeg",
     "posterID": null,
     "dateTime": "2023-07-02 15:13:37",
-    "fileName": "2fa881f952bddb8cae6a28f096eb9542.jpeg",
+    "fileName": "",
     "postText": "egte",
     "fileExt": "jpeg",
     "replyToID": null
     };
-    let imagePath, thumbPath;   
+    post.fileName = decodeURIComponent($page.url.searchParams.get('item') ||'');
     let showThumb = true,mounted=false;
     function buildImagePath(data) {
         post.fileName=data.fileName;
-        loadImage('#img',data.fileName)
+        if(post.fileName!=""){
+            loadImage('#img',post.fileName)
+        }
     }
+    afterUpdate(()=>{
+        //buildImagePath(post);//load image if set in url     *1)
+    });
     onMount(()=>{
         mounted=true;
         window.addEventListener('message', function(event) {
@@ -35,7 +41,12 @@
                 settings.set(event.data.settings);
             }
         });
-        window.opener.postMessage("mounted","*");
+        if(window.opener) {
+            window.opener.postMessage("mounted","*");
+        } else {
+            //*1) load image if set in url, but the #img-elmnt doesnt exist right now, only after re-render: deffer load 
+            setTimeout(()=>{buildImagePath(post)}, 500);
+        }
     });
 </script>
 <style>
@@ -51,11 +62,11 @@
 </style>
 {#if mounted===true}
 <Layout>
-    <UserCtrl slot="header2"/>
-    <span slot="sidebar"></span>
+    <UserCtrl slot="sidebar"/>
     <div class="viewContainer"> <p>{post.fileName}</p>
-        <img id='img' class="postImage" src="{imagePath}" alt="{post.fileName}" >
+        <img id='img' class="postImage" src="" alt="{post.fileName}" >
     </div>
+    <span slot="footer2"></span>
 </Layout>
 {:else}    
     <Loading />

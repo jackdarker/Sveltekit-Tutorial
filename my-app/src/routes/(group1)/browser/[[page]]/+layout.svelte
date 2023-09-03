@@ -17,25 +17,27 @@
     
     export let form; //is filled out when server responds on form-submision
     export let data; //see load()
-    let importing = false;
-    let picturename='',pictureID=-1,mounted=false;
+    let importing = false, content="", search="";
+    let picturename='',pictureID=-1,mounted=false,old_per_page=0;
     function onSelectDir(detail){
         const replaceState=false;
         //console.log("select", detail)
         const pageNo=1;
         const path=encodeURIComponent(detail.id);
-        goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+        search="";
+        goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${path}&page=${pageNo}&per_page=${data.thumbs.per_page}`, { replaceState:replaceState,invalidateAll:true })
     }
     function onSearch(detail){
         const replaceState=false;
-        console.log("search", detail)
         const pageNo=1;
-        goto(`/browser/${pageNo}?search=${detail}&path=${data.thumbs.path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+        search=detail;
+        goto(`/browser/${pageNo}?search=${search}&path=${""/*data.thumbs.path*/}&page=${pageNo}&per_page=${data.thumbs.per_page}`, { replaceState:replaceState,invalidateAll:true })
     }
     function onthumb(e) {
         const replaceState=false;
         picturename=e.currentTarget.alt; //Todo as img.src="blob:html..." we have to use alt="../public/.." instead
-        goto(`/browser/${data.thumbs.current_page}?item=${encodeURIComponent(picturename)}&path=${data.thumbs.path}&page=${data.thumbs.current_page}`, { replaceState:replaceState,invalidateAll:true })
+        //content="/viewer?item="+picturename;
+        goto(`/browser/${data.thumbs.current_page}?search=${search}&item=${encodeURIComponent(picturename)}&path=${data.thumbs.path}&page=${data.thumbs.current_page}&per_page=${data.thumbs.per_page}`, { replaceState:replaceState,invalidateAll:false })
     }
     function loadItem(_data){
         pictureID=_data.thumbs.itemId , picturename = _data.thumbs.item;
@@ -44,13 +46,24 @@
     }
     onMount(()=>{
       mounted=true;
+      //let _pag = document?document.getElementById("Paginator"):null; //TODO update Thumbnailview with resize event
       loadImage('#img',picturename); //if returning to page
     });
     async function routeToPage(_pageNo) {
         const replaceState=false;
-        const pageNo=_pageNo;
+        let pageNo=_pageNo,THUMB_SIZE=200;
         //let x=$page.route.id;
-        goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${data.thumbs.path}&page=${pageNo}`, { replaceState:replaceState,invalidateAll:true })
+        let _pag = document?document.getElementById("Thumbslist"):null;
+        if(_pag){
+            if(_pag.children[0]) THUMB_SIZE=_pag.children[0].offsetWidth;
+            data.thumbs.per_page= Math.max(1,Math.trunc(_pag.clientWidth/THUMB_SIZE)); //.offsetWidth
+            if(old_per_page && old_per_page!=data.thumbs.per_page) {
+                //if per_page changes we need to recalc page
+                pageNo =_pageNo*old_per_page/data.thumbs.per_page;
+            }
+            old_per_page=data.thumbs.per_page;
+        }
+        goto(`/browser/${pageNo}?item=${encodeURIComponent(picturename)}&path=${data.thumbs.path}&page=${pageNo}&per_page=${data.thumbs.per_page}`, { replaceState:replaceState,invalidateAll:true })
     }
     $:loadItem(data);
 </script>
@@ -80,6 +93,7 @@
         {/if}
     </span>
     <div class="content" style="display: flex">
+        <!--iframe src={content}></iframe>-->
         <div>
             <img class="medsize" id="img" src="" alt="" on:click={()=>openWindow({fileName:picturename})}/>
             <p>({pictureID}) {picturename}</p>

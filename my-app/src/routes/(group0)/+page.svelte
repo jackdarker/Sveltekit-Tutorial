@@ -1,11 +1,15 @@
 <script>
     import { onMount } from 'svelte';
+    import { ExpandableTile ,Checkbox, Form, TextInput,Button,Tooltip ,InlineNotification  } from "carbon-components-svelte";
     import {bindResizers} from '$lib/components/UIhelpers.js'
     import Dropzone from '$lib/components/Dropzone.svelte'
 onMount(()=>{
     bindResizers();
 });
-
+let content="/about";
+function foo(to){
+    content=to;
+}
 </script>
 
 
@@ -23,7 +27,8 @@ onMount(()=>{
         <div style="flex: 1 1 0%">Bottom</div>
     </div>
 </div>
-
+<button on:click={()=>{foo("/viewer?item=Icon.1_01.png")}}>to A</button><button on:click={()=>{foo("/about")}}>to B</button>
+<iframe src={content}></iframe>
 <style>
 
 </style>

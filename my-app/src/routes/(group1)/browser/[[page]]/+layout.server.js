@@ -6,11 +6,13 @@ export async function load(event) {
     let thumbs={},params=event.params||{}; 
     let search = event.url.searchParams;
     //console.log(event.locals.answer);  was created in hook.handle
-    params.page = params.page ?? 1;
+    params.page = params.page ?? '1';
     params.listFiles=true;
     params.path= decodeURIComponent(search.get('path')||"");
     params.item= decodeURIComponent(search.get('item')||"");
+    params.per_page= decodeURIComponent(search.get('per_page')||"5");
     params.search= search.get('search');
+    params.page = parseInt(params.page,10);params.per_page = parseInt(params.per_page,10);
     thumbs.item = params.item, thumbs.itemId=-1,thumbs.itemTags=[];
     let posts = db.findPost(params.item);
     if(posts.length>0){

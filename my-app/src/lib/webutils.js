@@ -12,7 +12,8 @@ import { viewHandle,settings } from './stores';
  */
 export async function loadImage(imgElement, file) {
     const myImage = document.querySelector(imgElement);
-    if(!myImage || file==='')return;
+    if(!myImage /*|| file===''*/)return;
+    if(file==='') { myImage.src="";return;} //clear image if undefined file
     const response = await fetch('/api?op=file&file='+encodeURIComponent(file));
     if (!response.ok) {
         throw new Error(`HTTP error, status = ${response.status}`);

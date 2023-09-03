@@ -1,11 +1,11 @@
 <script>
     import { onMount,afterUpdate } from 'svelte';
     import {loadImage} from '$lib/webutils.js';
-    import { PaginationNav } from "carbon-components-svelte";
+    import { PaginationNav,Pagination } from "carbon-components-svelte";
     import ImageView from '$lib/components/ImageView.svelte';
     //import fetchData from '$lib/data.js';
     export let design="right"; //left, right,side or top,bottom
-    export let onclick=null;
+    export let onclick=_onclick;
     export let onpage=_onpage;
     export let data; //data from parent
     let rows = [];
@@ -18,7 +18,10 @@
     let last_page = 1;
     let total = 0;
     let loading = true,mounted=false;
-    
+    const ITEM_WIDTH=200.0;
+    function _onclick(e){
+        console.log("clcik");
+    }
     function _onpage(page){
         console.log("newpage"+page);
     }
@@ -43,12 +46,12 @@
         loading = false;
     });*/
         //path = data.path;
-    
+        per_page = data.thumbs.per_page;
         current_page = data.thumbs.current_page;
         from = data.thumbs.from;
         to = data.thumbs.to;
         total = data.thumbs.total;
-        per_page = data.thumbs.per_page;
+        
         last_page = data.thumbs.last_page;
         rows = data.thumbs.rows;
         loading = false;
@@ -74,10 +77,11 @@
 </script>
 {#if (design==="bottom")}
     <div class="flex-container" id="Paginator">
-    <PaginationNav bind:page={current_page} total={last_page} shown={shown} on:change={(e)=>onpage(e.detail.page)}/> 
+    <!--<PaginationNav bind:page={current_page} total={last_page} shown={shown} on:change={(e)=>onpage(e.detail.page)}/> -->
+        <Pagination bind:page={current_page} pageSize={per_page} totalItems={total} pageSizeInputDisabled={true} on:change={(e)=>onpage(e.detail.page)}/>
     </div>
 {/if}
-<div class={(design==="vertical"||design==="left"||design==="right")?"grid-vertical":"grid-horizontal"}>
+<div id="Thumbslist" class={(design==="vertical"||design==="left"||design==="right")?"grid-vertical":"grid-horizontal"}>
         {#if loading}
             <p>loading...</p>
         {/if}
@@ -94,7 +98,8 @@
 </div>
 {#if (design!=="bottom")}
     <div class="flex-container" id="Paginator">
-    <PaginationNav total={last_page} shown={shown} bind:page={current_page} on:change={(e)=>(onpage(e.detail.page))}/> 
+    <!--<PaginationNav total={last_page} shown={shown} bind:page={current_page} on:change={(e)=>(onpage(e.detail.page))}/> -->
+        <Pagination bind:page={current_page} pageSize={per_page} totalItems={total} pageSizeInputDisabled={true} on:change={(e)=>onpage(e.detail.page)}/>
     </div>
 {/if}
 
@@ -113,10 +118,10 @@
         padding: 0.5em;
     }
     .card {
-        display: grid;
+        /*display: grid;
         grid-template-columns: 1fr;
         grid-template-rows: repeat(auto-fill, 15em);
-        grid-auto-flow: dense;
+        grid-auto-flow: dense;*/
         padding: 0.5em;
     }
     .card>img{
