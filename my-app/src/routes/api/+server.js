@@ -32,7 +32,7 @@ export async function GET(request) {
   switch(op){
     case "file": 
     { //file is relative to IMGDIR
-      const filename = pathresolve(IMGDIR,decodeURIComponent(urlParams.get('file')));
+      const filename = pathresolve(IMGDIR,(urlParams.get('file')));  //urlparams already decodeURIComponent?!
       verifyPath(filename);
       const contenttype = getContentTypeForFileType(filename);
       const asset = await fs.readFile(filename);
@@ -42,7 +42,7 @@ export async function GET(request) {
         }
       });}
     case "dir":{
-      const path = pathresolve(IMGDIR,decodeURIComponent(urlParams.get('path')));
+      const path = pathresolve(IMGDIR,(urlParams.get('path')));
       verifyPath(path);
       const asset = await fetchData(path, {listDirs:true,listFiles:false,per_page:9999});
       let dirs=[];
@@ -53,6 +53,8 @@ export async function GET(request) {
     }
     default:
       return new Response("", { status: 400, statusText: "invalid request" });
+    
+    //TODO if there is exception thrown, server terminates. It sahould send error tot client instead.
   }
   
 }

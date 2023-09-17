@@ -2,7 +2,7 @@
     import { onMount } from 'svelte';
     import { ExpandableTile ,Checkbox, Form, TextInput,Button,Tooltip ,InlineNotification  } from "carbon-components-svelte";
     import {bindResizers} from '$lib/components/UIHelpers.js'
-    import Dropzone from '$lib/components/Dropzone.svelte'
+    //import Dropzone from '$lib/components/Dropzone.svelte'
 onMount(()=>{
     bindResizers();
 });

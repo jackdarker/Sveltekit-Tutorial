@@ -10,10 +10,10 @@
   let activeId = "";
   let mounted=false;
   let selectedIds = [];
-  let children = [];
-  let dirlookup={}, nodesToLoad=[];
+  let children = [], dirlookup={}, nodesToLoad=[];
   let selectedIndex = 0;
   let searchterm="";
+  const ROOT_ID="_ROOT_";
 
   function _onselectdir(detail){
     console.log("select", detail)
@@ -24,7 +24,7 @@
   function updateDirTree(dirtree,updateID) {    
     let node;
     if(updateID==="") { //root
-      children=[{id:"ROOT",text:"ROOT",children:dirtree}];
+      children=[{id:ROOT_ID,text:ROOT_ID,children:dirtree}];
     } else {
       node=dirlookup[updateID];
       node.children=(dirtree.length===0)?null:dirtree;
@@ -57,6 +57,7 @@
 	});
     onMount(()=>{
       mounted=true;
+      children = [], dirlookup={}, nodesToLoad=[];
       loadDir("");
     });
   //$: updateDirTree(dirtree);
@@ -78,9 +79,13 @@
     </Form>
   {:else}
     <Form on:submit={(e) => {e.preventDefault();}}>
-    <TreeView {children} bind:activeId  bind:selectedIds
-      on:select={({ detail }) => {detail.id=(detail.id==="ROOT")?"":detail.id;onselectdir(detail);}}
+    <TreeView id="DirTree" style="min-height: 0; max-height: calc(100vH - 150px);; overflow: overlay;" {children} bind:activeId  bind:selectedIds
+      on:select={({ detail }) => {detail.id=(detail.id===ROOT_ID)?"":detail.id;onselectdir(detail);}}
     />
+    <!-- TODO
+      fix height limit
+      for some reason ROOT cannot be closed once opened
+    -->
     </Form>
   {/if}
 </aside>
