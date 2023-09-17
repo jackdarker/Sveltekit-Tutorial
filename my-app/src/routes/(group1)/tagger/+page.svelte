@@ -2,10 +2,12 @@
     import '$lib/styles/style.svelte';
     import {page} from '$app/stores'
     import { goto } from '$app/navigation';
+    import UserCtrl from '$lib/components/UserCtrlWidget.svelte'
     import SaveSVG from "carbon-icons-svelte/lib/Save.svelte";
     import UndoSVG from "carbon-icons-svelte/lib/Undo.svelte";
     import ChevronLeftSVG from "carbon-icons-svelte/lib/ChevronLeft.svelte";
     import { Button, Tag,Form, TextInput, Search, Select, SelectItem } from "carbon-components-svelte";
+	import UserCtrlWidget from '$lib/components/UserCtrlWidget.svelte';
     const redirectTo = decodeURIComponent($page.url.searchParams.get('from') ||'');
     export let data;  //see page.server.js#load
 
@@ -101,12 +103,14 @@
     }
     $:afterReload(data);
 </script>
-<h3>Editing {data.item.name}</h3>
+<UserCtrlWidget /> <hr>
 <div>
     <Button size="field" iconDescription="Back" icon={ChevronLeftSVG} href={redirectTo}/>
     <Button disabled={!modified} size="field" iconDescription="Save" icon={SaveSVG} on:click={(e)=>{uploadAssign()}}/>
     <Button disabled={!modified} size="field" iconDescription="Undo" icon={UndoSVG} on:click={(e)=>{revertAssign()}}/>
+    <span>Editing {data.item.name}</span>
 </div>
+
 <div class="myForm">
 <div><p>Unassigned Tags</p><Search size="sm" autocomplete="on" bind:search/>
     {#each locUnassignedTags as tag, i }

@@ -7,6 +7,7 @@ class Tag{
 		this.ID=tagID,this.Name=tagName;
 	}
 }
+console.log(process.env)
 console.log("opening "+DATABASE);  //TODO switch db between production & dev
 const db =new Database(DATABASE);
 db.pragma('journal_mode = WAL')

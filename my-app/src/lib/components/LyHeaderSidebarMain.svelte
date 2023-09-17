@@ -21,9 +21,11 @@
     }
     @media (min-width: 40em) { 
       .wrapper{
+        min-height: 0;  /* NEW */
+        min-width: 0;   /* NEW; needed for Firefox */
         grid: "hd2 hd2 hd hd" 50px
-              "sd  main main main"   1fr
-              "sd  main main main"  1fr
+              "sd  main main main"   minmax(0, 1fr)
+              "sd  main main main"  minmax(0, 1fr)
               "sd ft ft ft" min-content
               / 1fr  1fr  1fr  1fr;
         }
@@ -54,6 +56,9 @@
 
     .content {
     grid-area: main;
+    overflow: hidden;
+    min-height: 0;  /* NEW */
+    min-width: 0;   /* NEW; needed for Firefox */
     justify-self_: center;
     }
 

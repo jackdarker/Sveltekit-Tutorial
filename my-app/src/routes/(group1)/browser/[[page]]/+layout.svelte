@@ -111,8 +111,7 @@
 <style>
     /*todo switch between fullview and fit-to-screen; how to query size?*/
 .medsize{ 
-    max-width: 40em; 
-    max-height: 40em;
+    max-width: 100%; 
 }
 .content {
     margin:1em;

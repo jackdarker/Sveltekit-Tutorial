@@ -126,7 +126,7 @@
     }
     .card>img{
         max-width: 100%;
-        max-height: 100%;
+        max-height: 14em;
     } 
     .grid-horizontal {
         width:100%;

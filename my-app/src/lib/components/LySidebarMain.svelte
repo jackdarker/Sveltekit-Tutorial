@@ -21,7 +21,7 @@
         grid: "sd  main main main"   1fr
               "sd  main main main"  1fr
               "ft2 ft ft ft" min-content
-              / 1fr  1fr  1fr  1fr;
+              / 10rem  1fr  1fr  1fr;
         }
     }
     .footer {
