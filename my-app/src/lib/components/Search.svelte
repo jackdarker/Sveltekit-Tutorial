@@ -24,7 +24,8 @@
   function updateDirTree(dirtree,updateID) {    
     let node;
     if(updateID==="") { //root
-      children=[{id:ROOT_ID,text:ROOT_ID,children:dirtree}];
+      children=[{id:"Folderview",text:"Folderview",children:[]},
+        {id:ROOT_ID,text:ROOT_ID,children:dirtree}];
     } else {
       node=dirlookup[updateID];
       node.children=(dirtree.length===0)?null:dirtree;

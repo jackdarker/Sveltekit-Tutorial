@@ -8,9 +8,9 @@ export async function load(event) {
     //console.log(event.locals.answer);  was created in hook.handle
     params.page = params.page ?? '1';
     params.listFiles=true;
-    params.path= decodeURIComponent(search.get('path')||"");
-    params.item= decodeURIComponent(search.get('item')||"");
-    params.per_page= decodeURIComponent(search.get('per_page')||"5");
+    params.path= (search.get('path')||""); //decodeURIComponent already done?!
+    params.item= (search.get('item')||"");
+    params.per_page= (search.get('per_page')||"5");
     params.search= search.get('search');
     params.page = parseInt(params.page,10);params.per_page = parseInt(params.per_page,10);
     thumbs.item = params.item, thumbs.itemId=-1,thumbs.itemTags=[];
