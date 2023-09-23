@@ -1,7 +1,9 @@
 <script>
     import '$lib/styles/style.svelte';
     import {page} from '$app/stores'
-    import { Loading } from "carbon-components-svelte";
+    import { Loading, Button, DataTable } from "carbon-components-svelte";
+    import { invalidateAll } from '$app/navigation';
+    import ZoomFitSVG from "carbon-icons-svelte/lib/ZoomFit.svelte";
     import UserCtrl from '$lib/components/UserCtrlWidget.svelte'
     import Layout from '$lib/components/LySidebarMain.svelte';
     import { onMount,afterUpdate } from 'svelte';
@@ -20,10 +22,21 @@
     };
     post.fileName = decodeURIComponent($page.url.searchParams.get('item') ||'');
     let showThumb = true,mounted=false;
+    let selectedRowIds = [];
+    $: posts=[]; 
+    const headers = [
+     { key: "name", value: "Name" }
+    ];
+
     function buildImagePath(data) {
         post.fileName=data.fileName;
+        let idx={id:post.fileName,name:post.fileName};
         if(post.fileName!=""){
             loadImage('#img',post.fileName)
+            if(posts.findIndex((el)=>{return(el.id===post.fileName);})===-1) { 
+                posts = [...posts, idx];
+            }
+            selectedRowIds=[idx.id];
         }
     }
     afterUpdate(()=>{
@@ -48,7 +61,33 @@
             setTimeout(()=>{buildImagePath(post)}, 500);
         }
     });
+    function toogleSize(){
+        let _pag = document?document.getElementById("img"):null;
+        if(_pag){
+            _pag.classList.toggle("restrictsize");
+        }
+    }
+    function selectimg(evt) {
+        buildImagePath({fileName:evt.detail.id});
+    }
 </script>
+
+{#if mounted===true}
+<Layout>
+    <div slot="sidebar">
+        <UserCtrl />
+        <Button size="field" iconDescription="FullSize" icon={ZoomFitSVG} on:click={(e)=>{toogleSize()}}/>
+        <DataTable size="short" style="overflow:hidden;" bind:selectedRowIds headers={headers} rows={posts} on:click:row={(e)=>{selectimg(e)}} />
+    </div>
+    <div class="viewContainer"> <p>{post.fileName}</p>
+        <img id='img' class="postImage restrictsize" src="" alt="{post.fileName}" >
+    </div>
+    <span slot="footer2"></span>
+</Layout>
+{:else}    
+    <Loading />
+{/if}
+
 <style>
     .viewContainer{
         background-color: var(--secondaryColour);
@@ -59,15 +98,8 @@
         display: inline-block;
         width: 90%;
     }
+    .restrictsize {
+        max-width:100%; 
+        max-height:90vH;
+    }
 </style>
-{#if mounted===true}
-<Layout>
-    <UserCtrl slot="sidebar"/>
-    <div class="viewContainer"> <p>{post.fileName}</p>
-        <img id='img' class="postImage" src="" alt="{post.fileName}" >
-    </div>
-    <span slot="footer2"></span>
-</Layout>
-{:else}    
-    <Loading />
-{/if}

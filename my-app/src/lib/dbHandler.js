@@ -91,12 +91,13 @@ export class dbHandler {
 	}
 	createTag(tag){
 		tag.groupid = tag.groupid ||1;
+		tag.newname = tag.newname ||tag.name; //this is for namechange
 		const stmt = db.prepare('Update Tags SET name=?, groupID=? where (name=?)');
-		let info = stmt.run(tag.name,tag.groupid,tag.name);
+		let info = stmt.run(tag.newname,tag.groupid,tag.name);
 		let rowID=-1;
 		if(info.changes<=0) {
 			const stmt2 = db.prepare('Insert Into Tags (name,GroupID) VALUES(?,?)');
-			const info = stmt2.run(tag.name,tag.groupid);
+			const info = stmt2.run(tag.newname,tag.groupid);
 			rowID = (info.changes<=0)?-1:info.lastInsertRowid;
 		} 
 		//db.exec('Update tags Set name="'+tag.name+'" Where name="'+tag.name+'";Insert into tags (name) Select "'+tag.name+'" Where (Select Changes()=0);');  this should work but we dont get rowID

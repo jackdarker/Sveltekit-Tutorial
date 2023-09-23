@@ -22,7 +22,7 @@ export function load({ fetch,params,setHeaders,cookies,url }) {
 export const actions = {
 	create: async ({ cookies, request,url }) => {
 		const data = await request.formData();
-		db.createTag({name:data.get('id'),groupid:data.get('group')});
+		db.createTag({name:data.get('id'),newname:data.get('newname'), groupid:data.get('group')});
 		return { success: true };
 	},
     delete: async ({ cookies, request,url }) => {

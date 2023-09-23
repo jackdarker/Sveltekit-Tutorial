@@ -53,7 +53,6 @@
 <style>
     #drop_zone{
         border: 2px solid lightgray;
-        width: 200px;
-        height: 100px;
+
     }
 </style>

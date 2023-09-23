@@ -74,27 +74,27 @@
         <InlineNotification  kind="warning"  title=""  subtitle="{$page.form.message}"/>
     {/if}-->
     <UserCtrl slot="header2"/>
-    <span slot="sidebar">
+    <span slot="sidebar" >
         <Search onselectdir={onSelectDir} onsearch={onSearch}/>
         {#if importing===true}
         <p>importing...</p>
         {:else }
         <ExpandableTile >
             <div slot="above">Import files...</div>
-            <div slot="below"><p>sdff</p>
+            <div slot="below">
                 <UploadWidget path={data.thumbs.path}/> <p> or import existing files from...</p>
                 <form id="import" action="?/import" method="post" enctype="multipart/form-data"  
                     on:submit={(e) => { /*e.preventDefault(); */ }} 
                     use:enhance={({ formElement, formData, action, cancel }) => { importing = true; return async ({ result, update }) => { await update(); importing = false; alert("import done: "+result.data.message); }; }}>
-                    <Button size="field" type="submit" disabled={importing}>import Dir</Button> -->
-                    <Checkbox name="recursive" labelText="recursive" />
+                    <!--<Checkbox name="recursive" labelText="recursive" />-->
                     <TextInput name="dir" autocomplete="off" value="{data.thumbs.path}" readonly />
+                    <Button size="field" type="submit" disabled={importing}>import Dir</Button>
                 </form>
             </div>
         </ExpandableTile>
         {/if}
     </span>
-    <div class="content" style="display: flex">
+    <div class="content" slot="content" style="display: flex">
         <!--iframe src={content}></iframe>-->
         <div>
             <img class="medsize" id="img" src="" alt="" on:click={()=>openWindow({fileName:picturename})}/>
@@ -112,10 +112,17 @@
 
 <style>
     /*todo switch between fullview and fit-to-screen; how to query size?*/
+    .content {
+        overflow: overlay;
+        height: 100%;
+        max-height: 100%; 
+    }
 .medsize{ 
+
+    max-height: 100%; 
     max-width: 100%; 
 }
 .content {
-    margin:1em;
+    padding:1em;
 }
 </style>

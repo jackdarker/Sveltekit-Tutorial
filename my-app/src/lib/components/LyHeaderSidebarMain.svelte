@@ -1,15 +1,17 @@
 <div class="wrapper">
     <div class="header2"><slot name="header2" /></div>
     <div class="header"><slot name="header" /></div>
-    <div class="sidebar"><slot name="sidebar" /></div>
-    <div class="content"><slot /></div>
-    <div class="footer"><slot name=footer/></div>
-    <div class="overlay" hidden>Overlay</div>
+    <div class="sidebar" ><slot name="sidebar" /></div>
+    <div class="content"><slot name="content" /></div>
+    <div class="footer" ><slot name=footer/></div>
+    <div class="overlay" hidden>Overlay style="min-height: 0; max-height: calc(100vH); overflow: overlay;"</div>
 </div>
 
   <style>
     .wrapper{
       min-height: 100vh;
+      max-height: calc(100vH); 
+      overflow: overlay;
       display: grid;
       grid: "hd hd"
             "hd2 hd2"
@@ -21,8 +23,8 @@
     }
     @media (min-width: 40em) { 
       .wrapper{
-        min-height: 0;  /* NEW */
-        min-width: 0;   /* NEW; needed for Firefox */
+        /*min-height: 0;  /* NEW */
+        /*min-width: 0;   /* NEW; needed for Firefox */
         grid: "hd2 hd2 hd hd" 50px
               "sd  main main main"   minmax(0, 1fr)
               "sd ft ft ft" min-content
@@ -55,14 +57,15 @@
 
     .content {
     grid-area: main;
-    overflow: hidden;
     min-height: 0;  /* NEW */
     min-width: 0;   /* NEW; needed for Firefox */
     justify-self_: center;
     }
 
     .sidebar {
-    grid-area: sd;
+      grid-area: sd;
+      max-height: calc(100vH); 
+      overflow: overlay;
     }
 
     .wrapper > div.overlay {

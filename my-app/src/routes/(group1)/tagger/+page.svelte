@@ -127,8 +127,9 @@
 <div class="myForm">
 <Form  method="POST" action="?/create">
     <label > create/modify a tag:
-        <TextInput name="id" autocomplete="off"/>
-        <Select inline="true" name="group">
+        <TextInput inline="true" labelText="Name" name="id" autocomplete="off"/>
+        <TextInput inline="true" labelText="New-Name" name="newname" autocomplete="off"/>
+        <Select inline="true" labelText="color" name="group">
             {#each data.tagGroups as group, i}
                 <SelectItem value={group.id} text={group.name} />
             {/each}
