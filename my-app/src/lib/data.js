@@ -160,7 +160,15 @@ export function importDirRecursive(path){
   return(foo());
 }
 
-
+export function createDir(path){
+  function foo(){
+    let _path = path;
+    _path = isAbsolute(_path)?_path:pathresolve(IMGDIR,_path);
+    let dirCreation=FS.mkdir(_path, { recursive: true }, (err) => {if (err) throw err;});
+    return(dirCreation);
+  };
+  return(foo());
+}
 
 /*------------------------------------------------*/
 const db = new dbHandler();

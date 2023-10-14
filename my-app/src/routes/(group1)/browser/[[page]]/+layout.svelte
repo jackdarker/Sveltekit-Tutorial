@@ -17,6 +17,7 @@
     
     export let form; //is filled out when server responds on form-submision
     export let data; //see load()
+    let searchComp;
     let importing = false, content="", search="";
     let picturename='',pictureID=-1,mounted=false,old_per_page=0;
     function onSelectDir(detail){
@@ -75,12 +76,12 @@
     {/if}-->
     <UserCtrl slot="header2"/>
     <span slot="sidebar" >
-        <Search onselectdir={onSelectDir} onsearch={onSearch}/>
+        <Search onselectdir={onSelectDir} onsearch={onSearch} bind:this={searchComp}/>
         {#if importing===true}
         <p>importing...</p>
         {:else }
-        <ExpandableTile >
-            <div slot="above">Import files...</div>
+        <ExpandableTile style="padding-bottom:0.5em">
+            <div slot="above" >Import files...</div>
             <div slot="below">
                 <UploadWidget path={data.thumbs.path}/> <p> or import existing files from...</p>
                 <form id="import" action="?/import" method="post" enctype="multipart/form-data"  
@@ -89,6 +90,19 @@
                     <!--<Checkbox name="recursive" labelText="recursive" />-->
                     <TextInput name="dir" autocomplete="off" value="{data.thumbs.path}" readonly />
                     <Button size="field" type="submit" disabled={importing}>import Dir</Button>
+                </form>
+            </div>
+        </ExpandableTile>
+        <ExpandableTile style="padding-bottom:0.5em">
+            <div slot="above">Create directory...</div>
+            <div slot="below">
+                <form id="createDir" action="?/createDir" method="post" enctype="multipart/form-data"  
+                    on:submit={(e) => { /*e.preventDefault(); */ }} 
+                    use:enhance={({ formElement, formData, action, cancel }) => { importing = true; 
+                        return async ({ result, update }) => { await update(); importing = false; searchComp.loadDir(""); alert("creation done: "+result.data.message); }; }}>
+                    <!--<Checkbox name="recursive" labelText="recursive" />-->
+                    <TextInput name="dir" autocomplete="off" on:click={(e) => {e.stopPropagation();}} value="{data.thumbs.path}" />
+                    <Button size="field" type="submit" disabled={importing}>create Dir</Button>
                 </form>
             </div>
         </ExpandableTile>
@@ -125,4 +139,8 @@
 .content {
     padding:1em;
 }
+
+/*div[slot="above"]{
+    padding:1em;
+}*/
 </style>

@@ -1,7 +1,7 @@
 import { fail,error } from '@sveltejs/kit';
 import { writeFile } from 'fs/promises';
 import {IMGDIR} from '$lib/const.js'
-import { addPost,importDir, importDirRecursive } from '$lib/data.js';
+import { addPost,importDir,createDir, importDirRecursive } from '$lib/data.js';
 
 export const actions = {
     //upload picture and add to database
@@ -30,6 +30,19 @@ export const actions = {
       let res, params = {recursive: data.get("recursive")|| false}; //TODO get queries only value but not selected?
       try{
         res= await importDirRecursive(`${IMGDIR}/${dir}`); 
+      } catch(err) {
+        throw new error(422,err.message);
+      }
+      return { success: true, message: JSON.stringify(res) };
+    },
+    //create subdirectory
+    createDir: async (event) => {
+      let { cookies, request, locals } =event;
+      const data = await request.formData();
+      const dir = decodeURIComponent(data.get("dir"));
+      let res, params = {}; 
+      try{
+        res= await createDir(`${IMGDIR}/${dir}`); 
       } catch(err) {
         throw new error(422,err.message);
       }

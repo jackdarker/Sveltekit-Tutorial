@@ -39,9 +39,11 @@
     //select next subelement to fetch (broadfirst)
     if(nodesToLoad.length>0) {
       loadDir(nodesToLoad.shift());
+    } else {
+      children=children; //force update
     }
   }
-  function loadDir(path){
+  export function loadDir(path){
     loadDirectory(path)
     .then(function (response) {
         updateDirTree(response.dirs,path)
