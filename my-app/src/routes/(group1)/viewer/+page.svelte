@@ -1,7 +1,8 @@
 <script>
     import '$lib/styles/style.svelte';
     import {page} from '$app/stores'
-    import { Loading, Button, DataTable } from "carbon-components-svelte";
+    import { Loading, Button, DataTable, Link } from "carbon-components-svelte";
+    import SubtractSVG from "carbon-icons-svelte/lib/SubtractAlt.svelte";
     import { invalidateAll } from '$app/navigation';
     import ZoomFitSVG from "carbon-icons-svelte/lib/ZoomFit.svelte";
     import UserCtrl from '$lib/components/UserCtrlWidget.svelte'
@@ -9,6 +10,7 @@
     import { onMount,afterUpdate } from 'svelte';
     import {loadImage} from '$lib/webutils.js';
     import { settings } from '$lib/stores.js';
+    import {bindResizers} from '$lib/components/UIHelpers.js'
     export let post={
     "postID": 11,
     "name": "Anonymous ",
@@ -25,6 +27,7 @@
     let selectedRowIds = [];
     $: posts=[]; 
     const headers = [
+     { key: "X", value: "X" },
      { key: "name", value: "Name" }
     ];
 
@@ -32,7 +35,7 @@
         post.fileName=data.fileName;
         let idx={id:post.fileName,name:post.fileName};
         if(post.fileName!=""){
-            loadImage('#img',post.fileName)
+            loadImage('#img',post.fileName);
             if(posts.findIndex((el)=>{return(el.id===post.fileName);})===-1) { 
                 posts = [...posts, idx];
             }
@@ -70,6 +73,9 @@
     function selectimg(evt) {
         buildImagePath({fileName:evt.detail.id});
     }
+    function removeimg(row) {//..from list
+        posts=posts.filter((el)=>{return(el.id!==row.id)});
+    }
 </script>
 
 {#if mounted===true}
@@ -77,12 +83,23 @@
     <div slot="sidebar">
         <UserCtrl />
         <Button size="field" iconDescription="FullSize" icon={ZoomFitSVG} on:click={(e)=>{toogleSize()}}/>
-        <DataTable size="short" style="overflow:hidden;" bind:selectedRowIds headers={headers} rows={posts} on:click:row={(e)=>{selectimg(e)}} />
+        <DataTable id="imglist" size="short" style="overflow:hidden;" bind:selectedRowIds headers={headers} rows={posts} on:click:row={(e)=>{selectimg(e)}}> 
+            <svelte:fragment slot="cell-header" let:header>  
+                {#if header.key !== "X"}
+                    {header.value}
+                {/if}
+            </svelte:fragment>
+            <svelte:fragment slot="cell" let:row let:cell>
+                {#if cell.key === "X"}
+                    <Button size="field" kind="ghost" iconDescription="Remove" icon={SubtractSVG} on:click={(e)=>{removeimg(row)}}/>
+                {:else}{cell.value}{/if}
+            </svelte:fragment>
+        </DataTable>
     </div>
     <div class="viewContainer"> <p>{post.fileName}</p>
         <img id='img' class="postImage restrictsize" src="" alt="{post.fileName}" >
     </div>
-    <span slot="footer2"></span>
+    <span slot="footer2" use:bindResizers></span>
 </Layout>
 {:else}    
     <Loading />
@@ -101,5 +118,11 @@
     .restrictsize {
         max-width:100%; 
         max-height:90vH;
+    }
+    :global(#imglist > table > thead) {
+        visibility:collapse;
+    }
+    :global(#imglist > table > tbody > tr > td) {
+        padding:0px;
     }
 </style>

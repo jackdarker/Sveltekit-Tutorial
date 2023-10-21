@@ -56,6 +56,7 @@ export class dbHandler {
 			Color	TEXT			
 		)`
 		db.exec(query);
+		this.createTagGroup({name:"aqua",color:"aqua"});
 		this.createTagGroup({name:"gray",color:"gray"});
 		this.createTagGroup({name:"red",color:"red"});
 		this.createTagGroup({name:"blue",color:"blue"});

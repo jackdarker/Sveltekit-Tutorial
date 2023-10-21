@@ -1,6 +1,5 @@
 <script>
     import { onMount } from 'svelte';
-    import { ExpandableTile ,Checkbox, Form, TextInput,Button,Tooltip ,InlineNotification  } from "carbon-components-svelte";
     import {bindResizers} from '$lib/components/UIHelpers.js'
     //import Dropzone from '$lib/components/Dropzone.svelte'
 onMount(()=>{
@@ -15,7 +14,6 @@ function foo(to){
 
 <h1>home</h1>
 <p>this is the home page.</p>
-
 <div style="display: flex; border: 1px solid #cbd5e0;">
     <div>Left</div>
     <div style="width: 4px; border: 2px solid #cbd5e0;" class="resizer" data-direction="horizontal"></div>

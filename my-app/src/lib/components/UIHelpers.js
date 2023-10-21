@@ -16,7 +16,7 @@ export function bindResizers() {
         const direction = resizer.getAttribute('data-direction') || 'horizontal';
         const prevSibling = resizer.previousElementSibling;
         const nextSibling = resizer.nextElementSibling;
-
+        const cursortype = (direction==='horizontal')?"col-resize":"row-resize";
         // The current position of mouse
         let x = 0;
         let y = 0;
@@ -56,9 +56,9 @@ export function bindResizers() {
                     break;
             }
 
-            const cursor = direction === 'horizontal' ? 'col-resize' : 'row-resize';
-            resizer.style.cursor = cursor;
-            document.body.style.cursor = cursor;
+            //const cursor = direction === 'horizontal' ? 'col-resize' : 'row-resize';
+            //resizer.style.cursor = cursortype;
+            //document.body.style.cursor = cursortype;
 
             prevSibling.style.userSelect = 'none';
             prevSibling.style.pointerEvents = 'none';
@@ -68,8 +68,8 @@ export function bindResizers() {
         };
 
         const mouseUpHandler = function () {
-            resizer.style.removeProperty('cursor');
-            document.body.style.removeProperty('cursor');
+            //resizer.style.removeProperty('cursor');
+            //document.body.style.removeProperty('cursor');
 
             prevSibling.style.removeProperty('user-select');
             prevSibling.style.removeProperty('pointer-events');
@@ -84,6 +84,7 @@ export function bindResizers() {
 
         // Attach the handler
         resizer.addEventListener('mousedown', mouseDownHandler);
+        resizer.style.cursor=cursortype;
     };
 
     // Query all resizers

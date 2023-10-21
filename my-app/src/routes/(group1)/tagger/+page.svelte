@@ -114,13 +114,13 @@
 <div class="myForm">
 <div><p>Unassigned Tags</p><Search size="sm" autocomplete="on" bind:search/>
     {#each locUnassignedTags as tag, i }
-        <Tag id={tag.id} type={tag.color} interactive on:click={(e)=>(assignTags(tag))}>{tag.name}</Tag>
+        <Tag id={tag.id} type={tag.color} style={"background-color:"+tag.color+";"} interactive on:click={(e)=>(assignTags(tag))}>{tag.name}</Tag>
     {/each}
 </div></div>
 <div class="myForm">
 <div><p>Assigned Tags</p>
     {#each locAssignedTags as tag, i }
-        <Tag id={tag.id} type={tag.color} interactive on:click={(e)=>(assignTags(tag,true))}>{tag.name}</Tag>
+        <Tag id={tag.id} type={tag.color} style={"background-color:"+tag.color+";"} interactive on:click={(e)=>(assignTags(tag,true))}>{tag.name}</Tag>
     {/each}
 </div>
 </div>
