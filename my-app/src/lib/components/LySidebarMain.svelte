@@ -1,9 +1,7 @@
-<div class="wrapper" style="display: flex;height: 100vH;">
-  <div class="sidebar"><slot name="sidebar" /></div>
+<div class="wrapper" style="display: flex;min-height: 100vH;">
+  <div class="sidebar" style="display: flex;"><slot name="sidebar" /></div>
   <div style="width: 4px; border: 2px solid #cbd5e0;" class="resizer" data-direction="horizontal"></div>
   <div class="content"><slot /></div>
-  <div class="footer2"><slot name=footer2/></div>
-  <div class="footer"><slot name=footer/></div>
   <div class="overlay" hidden>Overlay</div>
 </div>
 

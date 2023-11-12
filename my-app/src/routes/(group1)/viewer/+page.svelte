@@ -80,10 +80,10 @@
 
 {#if mounted===true}
 <Layout>
-    <div slot="sidebar">
+    <div slot="sidebar" style="display: flex;flex-direction: column;">
         <UserCtrl />
-        <Button size="field" iconDescription="FullSize" icon={ZoomFitSVG} on:click={(e)=>{toogleSize()}}/>
-        <DataTable id="imglist" size="short" style="overflow:hidden;" bind:selectedRowIds headers={headers} rows={posts} on:click:row={(e)=>{selectimg(e)}}> 
+        <div><Button size="field" iconDescription="FullSize" icon={ZoomFitSVG} on:click={(e)=>{toogleSize()}}/></div>
+        <DataTable id="imglist" size="short" style="overflow:auto;flex-grow:1;" bind:selectedRowIds headers={headers} rows={posts} on:click:row={(e)=>{selectimg(e)}}> 
             <svelte:fragment slot="cell-header" let:header>  
                 {#if header.key !== "X"}
                     {header.value}
