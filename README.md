@@ -9,8 +9,8 @@ I try to create my own Image-Gallery with certain functionallity:
 ^3: implemented
 - directory-mode: browse directorys and display list of thumbnails (^3)
 - tag-search-mode: enter tags to search for and display list of thumbnails (^2)
-- when clicking on a thumbnail, display the full image in viewmode. (^2)
-- for viewmode a separate page is opened or reusing the same page if its already open (^2)
+- when clicking on a thumbnail, display the full image in viewmode. (^3)
+- for viewmode a separate page is opened or reusing the same page if its already open (^3)
 - in browsemode you can: open a page for tag-editor, mark image for deletion, rename image (^2)
 - tag-editor: this lets you create/delete/edit tags and add/remove tags to images (^2)
 
@@ -25,10 +25,10 @@ There is a database to manage tags and images. SQLite is used.
 The root-directory of the images can be outside of the svelte-project. Images are served dynamically, not statically as svelte-resources!
 
 # Dependencys
-
  - For UI-components https://carbon-components-svelte.onrender.com/
  - For UI-icons https://carbon-icons-svelte.onrender.com/
  - for database better-sqlite3; sqlite3 uses require which is not supported by vite
+ - for Image resizing on server: sharp
 
 # How to run the release
 - download the repo and run build2.cmd (build.cmd is from the sveletkit-source but doesnt seem to work), this should download the required node modules and compiled files into build directory
@@ -38,6 +38,7 @@ The root-directory of the images can be outside of the svelte-project. Images ar
 
 # How to run the debug
 - execute runServer_debug.cmd and connect your browser to the shown server-location
+- in VSCode workspace goto Run and debug and select attach workspace
 - you might have to edit .env
 
 # ToDo
@@ -46,3 +47,4 @@ The root-directory of the images can be outside of the svelte-project. Images ar
 - slideshow-mode?
 - database support for mongoDB, mySQL
 - possibility to add comments to pictures?
+- prettify design

@@ -1,5 +1,6 @@
 import { json } from '@sveltejs/kit';
 import {promises as fs} from "fs";
+import sharp from 'sharp';
 import {resolve as pathresolve,normalize,relative,sep,isAbsolute} from "path";
 import {IMGDIR} from '$lib/const.js'
 import {fetchData} from '$lib/data.js';
@@ -33,10 +34,17 @@ export async function GET(request) {
     case "file": 
     { //file is relative to IMGDIR
       const filename = pathresolve(IMGDIR,(urlParams.get('file')));  //urlparams already decodeURIComponent?!
+      const thumb=urlParams.get('thumb'); //
       verifyPath(filename);
       const contenttype = getContentTypeForFileType(filename);
       const asset = await fs.readFile(filename);
-      return new Response(asset, {
+      let asset2=asset;
+      if(thumb && contenttype!="image/svg+xml") { //TODO thumb contains width only?
+        asset2 = await sharp(asset)
+        .resize({ width: Math.max(32,Math.min(4000,thumb)), withoutEnlargement:true})  //some size safeguard
+        .toBuffer();
+      }
+      return new Response(asset2, {
         headers: {
           "Content-Type": contenttype
         }

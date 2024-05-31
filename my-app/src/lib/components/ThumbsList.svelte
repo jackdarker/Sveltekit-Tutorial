@@ -58,7 +58,7 @@
         for(var i=0;(mounted && (i<per_page));i++){
             let row=rows[i];
             if(row && !row.isDir){ //Todo placeholderimg for dirs
-                loadImage('#img'+i,rows[i].fileName);
+                loadImage('#img'+i,rows[i].fileName,196);
             }
         }
     }

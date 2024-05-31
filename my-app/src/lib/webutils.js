@@ -10,11 +10,11 @@ import { viewHandle,settings } from './stores';
  * @param {*} imgElment queryselector f.e. #img1
  * @param {*} file filename
  */
-export async function loadImage(imgElement, file) {
+export async function loadImage(imgElement, file,thumb) {
     const myImage = document.querySelector(imgElement);
     if(!myImage /*|| file===''*/)return;
     if(file==='') { myImage.src="";return;} //clear image if undefined file
-    const url= '/api?op=file&file='+encodeURIComponent(file);
+    const url= '/api?op=file'+((thumb)?'&thumb='+thumb.toString():'')+'&file='+encodeURIComponent(file);
     const response = await fetch(url);
     if (!response.ok) {
         throw new Error(`HTTP error, status = ${response.status}`);
