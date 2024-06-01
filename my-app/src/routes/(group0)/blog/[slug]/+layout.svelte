@@ -8,7 +8,7 @@
 	</main>
 
 	<aside>
-		<h2>More posts</h2>
+		<h3>More posts</h3>
 		<ul>
 			{#each data.summaries as { slug, title }}
 				<li>

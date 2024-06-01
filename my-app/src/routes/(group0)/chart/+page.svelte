@@ -5,6 +5,7 @@
     
     //see https://dev.to/learners/make-a-scatter-plot-with-svelte-and-d3-56md
     import Axis from "$lib/components/Axis.svelte";
+    export let data;  //see page.server.js#load
 
     let visible=true;
     let dataset = [1.0,2.0,3.0,4.0,3.0,1.0];
@@ -26,62 +27,24 @@
     $: xScale = scaleLinear().domain([0, 10]).range([0, width]); 
     //creates afunction that calculates width by data-value
 
-    $: xScaleXY  =  scaleLinear()
-    .domain(extent(datasetXY, (d)  =>  d[0]))
-    .range([0, innerWidth]);
-
-    $: yScaleXY  =  scaleLinear()
-        .domain(extent(datasetXY, (d)  =>  d[1]))
-        .range([innerHeight, 0]);
-
-    $: line_gen = line().curve(curveNatural)
-        .x((d) => xScaleXY(d[0]))
-        .y((d) => yScaleXY(d[1]))(datasetXY);
-    //linegenerator to connect datapoints
-
-    //select("h1").on("click", (event) => alert(event))
-    //select(document.body).style("background", "blue");
 </script>
 
 <h1>charts</h1>
-<h2>simple barchart</h2>
-<label>
-	<input type="checkbox" bind:checked={visible} />
-	visible
-</label><br>
-
-<svg {width} {height}><rect {width} {height} fill="lightgray"></rect>
-    {#each dataset as data, i}
+<h2>Tag uses barchart</h2>
+<svg {width} {height}  color="black" ><rect {width} {height} fill="lightgray"></rect>
+    {#each data.allTags as dat, i}
     <rect
-        fill="blue"
+        fill={dat.color}
         x={0}
         y={yScale(i)}
-        width={xScale(data)}
+        width={xScale(dat.count)}
         height={yScale.bandwidth()}
-        onclick="alert()"
-        onmouseover="alert()"
-        in:fly|global={{ x: 200, duration: 1000, delay: i * 500 }} 
+        in:fly|global={{ x: -200, duration: 1000, delay: i * 50 }} 
     />
-    <text class="barlabel" x=5 y={yScale(i)+yScale.bandwidth()*0.8}>{data.toString()}</text>
+    <text class="barlabel" x=5 y={yScale(i)+yScale.bandwidth()*0.8}>{dat.name.toString()}</text>
     {/each}
-    <!-- fly|global otherwise the animation would not play when page is opened --> 
-    <!-- <circle fill="red" cx=40 cy=40 r=10></circle>-->
-</svg>
-<h2>simple linechart</h2>
-<svg {width} {height}><rect {width} {height} fill="lightgray"></rect>
-        <g transform={`translate(${margin.left},${margin.top})`}>
-          <Axis {innerHeight} {margin} scale={xScaleXY} position="bottom" />
-          <text x={innerWidth * 0.4} y={innerHeight + 35}>Timestamp</text>
-          <Axis {innerHeight} {margin} scale={yScaleXY} position="left" />
-          <text transform={`translate(${-28},${innerHeight *0.6}) rotate(-90)`}>Temperature</text>
-          <path d={line_gen} />
-          {#if visible}{#each datasetXY as data, i}
-            <circle fill="red" r="4"
-                cx={xScaleXY(data[0])}
-                cy={yScaleXY(data[1])}
-            />
-            {/each}{/if}
-        </g>
+    <Axis {innerHeight} {margin} scale={xScale} position="bottom" />
+    <text x={innerWidth * 0.4} y={innerHeight + 35}>Count</text>
 </svg>
 
 <style>

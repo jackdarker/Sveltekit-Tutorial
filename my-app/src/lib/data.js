@@ -182,6 +182,9 @@ export function findTagGroups() {
 export function findPostTags(postId) {
 	return(db.findPostTags(postId));
 }
+export function getTagStatistic() {
+	return(db.getTagStatistic());
+}
 export function findPost(search) {
 	return(db.findPost(search));
 }

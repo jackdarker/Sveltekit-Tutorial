@@ -18,6 +18,15 @@ db.pragma('journal_mode = WAL')
 		console.log("dbHandler::dbConnected");
 	}
 });*/
+
+/**
+ * interface to image database
+ * Boards = unused
+ * Posts = list of Image-posts
+ * Tags = list of tags for Posts; tags can be assigned to a group
+ * TagGroups = definition of TagGroups; groups define styling of tag in Viewer
+ * PostTags = assicoation of Tags to Posts 
+ */
 export class dbHandler {
 	dbInit(){
 		let query = `CREATE TABLE IF NOT EXISTS Posts (
@@ -117,7 +126,7 @@ export class dbHandler {
 	 * @memberof dbHandler
 	 */
 	findTags(search){
-		let results = [];
+		let results = []; //TODO limit rowcount
 		const stmt = db.prepare('SELECT Tags.ID,Tags.Name, TagGroups.ID as GroupID, TagGroups.Color FROM Tags left join TagGroups on Tags.GroupID=TagGroups.ID');
 		const rows = stmt.all();
 		rows.forEach((row)=>{				
@@ -136,6 +145,18 @@ export class dbHandler {
 		rows.forEach((row)=>{				
 			//results.push(new Tag(row.ID,row.Name));   classes not compatible with devalue?
 			results.push({ id:row.ID, name: row.Name, groupid:row.GroupID, color:row.Color});
+		});
+		return(results);
+	}
+	getTagStatistic(){
+		let results = [];
+		const stmt = db.prepare('SELECT Tags.ID,max(Tags.Name) as name,count(Tags.ID) as count,max(TagGroups.Color) as color FROM Tags '+
+			'inner join PostTags on Tags.ID=PostTags.tagId '+
+			'left join TagGroups on Tags.GroupID=TagGroups.ID '+
+			'Group by (Tags.ID) order by count desc ');
+		const rows = stmt.all();
+		rows.forEach((row)=>{				
+			results.push({ id:row.ID, name: row.name, count:row.count, color:row.color});
 		});
 		return(results);
 	}
