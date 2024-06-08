@@ -74,6 +74,12 @@ function getContentTypeForFileType(filename) {
     { //see https://www.iana.org/assignments/media-types/media-types.xhtml#image
       case "jpg":
       case "png":
+      case "gif":
+      case "webp":
+      case "bmp":
+      case "emf":
+      case "tiff":
+      case "wmf":
         return("image/"+type);
       case "jpeg":
         return("image/jpg");
@@ -83,7 +89,7 @@ function getContentTypeForFileType(filename) {
         return("application/json"); 
     }
   } 
-  return("");
+  return(""); //TODO ?
 }
 /*export function GET() {
 	const number = Math.floor(Math.random() * 6) + 1;

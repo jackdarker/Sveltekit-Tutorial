@@ -2,3 +2,4 @@ public
 /my-app/*.db-shm
 /my-app/*.db-wal
 /my-app/*.db
+build

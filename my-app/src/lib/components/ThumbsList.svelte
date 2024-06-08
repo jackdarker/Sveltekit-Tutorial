@@ -10,10 +10,9 @@
     export let data; //data from parent
     let rows = [];
     let path = '';
-    let current_page = 1;
+    let current_page =1;
     let from = 1;
     let to = 1;
-    let shown =5;
     let per_page = 1;
     let last_page = 1;
     let total = 0;
@@ -25,7 +24,7 @@
     function _onpage(page){
         console.log("newpage"+page);
     }
-    function changePage(data) {
+    function changePage(data,pass2) {
         loading = true;
 
     /*fetchData(path, params)
@@ -54,18 +53,25 @@
         
         last_page = data.thumbs.last_page;
         rows = data.thumbs.rows;
-        loading = false;
-        for(var i=0;(mounted && (i<per_page));i++){
-            let row=rows[i];
-            if(row && !row.isDir){ //Todo placeholderimg for dirs
-                loadImage('#img'+i,rows[i].fileName,196);
+        if(pass2){  //pass1 = change rows and setup <img>-nodes, pass2 = display pictures
+            loading = false;
+            for(var i=0;(mounted && (i<per_page));i++){
+                let row=rows[i];
+                const _img = document.querySelector('#img'+i);
+                const _alt = (_img)?_img.alt:null;  
+                //hack: when switching pages changePage is fired for oldpage and newPage and if oldPage-Images take longer to load it will be shown instead of newPage-Image
+                //so double check if the image is already there to avoid reload of oldPage-Image (alt is set in loadImage!)
+                if(row && !row.isDir && (_alt!=rows[i].fileName)){ //Todo placeholderimg for dirs
+                    loadImage('#img'+i,rows[i].fileName,ITEM_WIDTH-4);
+                }
             }
         }
+        
     }
     afterUpdate(() => {
         //hack: when navigating from a page with 4 items to page with 5 items, the 5. item is not shown
         //because changePage was triggered before all 5 <img> nodes where created. 
-		changePage(data);
+		changePage(data,true);
 	});
     onMount(()=>{
       mounted=true;//changePage(data);
@@ -73,7 +79,7 @@
       let style = getComputedStyle(elmnt);
       //console.log(style.width);   Todo depending on available space, set per_page and requery list
     });
-    $: changePage(data);
+    $: changePage(data,false);
 </script>
 {#if (design==="bottom")}
     <div class="flex-container" id="Paginator">
@@ -88,7 +94,7 @@
         
         {#each rows as row, i}
         <div class="card">
-            <img id={"img"+i} src="" alt="{row.fileName}" on:click={row.isDir?null:onclick}/>
+            <img id={"img"+i} src="" alt="" on:click={row.isDir?null:onclick}/><!--<img id={"img"+i} src="" alt="{row.fileName}" on:click={row.isDir?null:onclick}/>-->
             <p>{row.name}</p>
             <!--<ImageView url={row.fileName} name={row.name} onclick={onclick}/>-->
         </div>

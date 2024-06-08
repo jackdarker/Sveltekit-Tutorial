@@ -41,8 +41,10 @@
         goto(`/browser/${data.thumbs.current_page}?search=${search}&item=${encodeURIComponent(picturename)}&path=${data.thumbs.path}&page=${data.thumbs.current_page}&per_page=${data.thumbs.per_page}`, { replaceState:replaceState,invalidateAll:false })
     }
     function loadItem(_data){
-        pictureID=_data.thumbs.itemId , picturename = _data.thumbs.item;
         if(mounted!=true) return;
+        const _alt = document.querySelector('#img').alt;
+        if(_alt == _data.thumbs.item) return; //skip re-load
+        pictureID=_data.thumbs.itemId , picturename = _data.thumbs.item;
         loadImage('#img',picturename);
     }
     onMount(()=>{

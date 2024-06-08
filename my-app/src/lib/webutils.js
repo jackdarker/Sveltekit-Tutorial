@@ -22,8 +22,10 @@ export async function loadImage(imgElement, file,thumb) {
         const blob = await response.blob();
         myImage.src =URL.createObjectURL(blob);
         myImage.onload = () => {
-            URL.revokeObjectURL(myImage.src); //should clear blob after loaded by IMG
+            myImage.alt=file;
+            URL.revokeObjectURL(myImage.src); //should release blob for GC after loaded by IMG  //TODO the blob still exist in the browser cache? would it be possible to reuse it instead reloading?
         };
+        
     }
 }
 /**

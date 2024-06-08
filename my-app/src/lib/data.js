@@ -1,9 +1,9 @@
 /* data-access used by server
 */
 import {dbHandler} from "$lib/dbHandler.js";
-import {resolve as pathresolve,relative,sep,isAbsolute} from "path";
+import {resolve as pathresolve,relative,sep,isAbsolute,extname} from "path";
 import FS from "fs";
-import {IMGDIR} from "$lib/const.js"
+import {IMGDIR,FILEEXTFILTER} from "$lib/const.js"
 import { Db2Database } from "carbon-icons-svelte";
 //const baseDir = process.cwd();
 //const imgDir = pathresolve(baseDir+"\\..\\public\\"); //Todo
@@ -18,6 +18,7 @@ import { Db2Database } from "carbon-icons-svelte";
 async function processDirectory(abspath,params) {
   const listDirs = params.listDirs || false;
   const listFiles = params.listFiles || false;
+  const extFilter = params.extFilter || FILEEXTFILTER; //if filter is not defined use const-value
   let baseurl;
   baseurl=relative(IMGDIR,abspath);
   baseurl=(baseurl.length===0)?baseurl:baseurl+sep; // public/thumbs/
@@ -35,7 +36,9 @@ async function processDirectory(abspath,params) {
       //var data = await FS.promises.readFile(resolve(path,files[i]),'utf8');
       //await onFileRead(files[i],data);
       //console.log(files[i]);
-      if((isDir && listDirs) || (!isDir && listFiles)) {
+      if((isDir && listDirs) || 
+          (!isDir && listFiles && 
+            (extFilter.length<=0 || extFilter.includes(extname(entry.name.toLowerCase()).slice(1))) )) {
         data.push({id:(i+1),name:entry.name,fileName:baseurl+entry.name,isDir:isDir});
       }
   } 
