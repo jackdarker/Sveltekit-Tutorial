@@ -41,7 +41,7 @@
         height={yScale.bandwidth()}
         in:fly|global={{ x: -200, duration: 1000, delay: i * 50 }} 
     />
-    <text class="barlabel" x=5 y={yScale(i)+yScale.bandwidth()*0.8}>{dat.name.toString()}</text>
+    <text class="barlabel" x=5 y={yScale(i)+yScale.bandwidth()*0.8} style="color:{dat.fgcolor}">{dat.name.toString()}</text>
     {/each}
     <Axis {innerHeight} {margin} scale={xScale} position="bottom" />
     <text x={innerWidth * 0.4} y={innerHeight + 35}>Count</text>

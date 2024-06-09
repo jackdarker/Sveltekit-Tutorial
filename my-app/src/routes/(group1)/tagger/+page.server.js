@@ -25,6 +25,11 @@ export const actions = {
 		db.createTag({name:data.get('id'),newname:data.get('newname'), groupid:data.get('group')});
 		return { success: true };
 	},
+	createGroup: async ({ cookies, request,url }) => {
+		const data = await request.formData();
+		db.createTagGroup({name:data.get('name'),newname:data.get('newname'), color:data.get('color'), fgcolor:data.get('fgcolor'), shape:""});
+		return { success: true };
+	},
     delete: async ({ cookies, request,url }) => {
 		const data = await request.formData();
 		db.deleteTag( {name:data.get('id')});

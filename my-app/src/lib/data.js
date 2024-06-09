@@ -204,6 +204,9 @@ export function createTag(tag){
   //let i = allTags.findIndex((e)=>{return(e.id===tag)});
   //if(i<0) allTags.push({id:tag});
 }
+export function createTagGroup(group){
+  db.createTagGroup(group);
+}
 export function deleteTag(tag){
   db.deleteTag(tag);
 }

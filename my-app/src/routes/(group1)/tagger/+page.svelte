@@ -8,6 +8,7 @@
     import ChevronLeftSVG from "carbon-icons-svelte/lib/ChevronLeft.svelte";
     import { Button, Tag,Form, TextInput, Search, Select, SelectItem } from "carbon-components-svelte";
 	import UserCtrlWidget from '$lib/components/UserCtrlWidget.svelte';
+    import {RalColors} from "$lib/webutils.js";
     const redirectTo = decodeURIComponent($page.url.searchParams.get('from') ||'');
     export let data;  //see page.server.js#load
 
@@ -91,6 +92,29 @@
             //location.reload(); this causes page to flicker because full reload
         }
     }
+    function complColor(colorA){
+        let _tmp=0xFFFFFF-parseInt(colorA.replace("#",""), 16); 
+        //TODO this is complementary color but gray complements gray
+        return("#"+_tmp.toString(16));
+    }
+    function updateColor(A,BG,FG){
+        let _a=document.querySelector(A);
+        let _bg=document.querySelector(BG);
+        let _fg=document.querySelector(FG);
+        _a.style.color=_fg.value;
+        _a.style["background-color"]=_bg.value;
+    }
+    function updateColorByGroup(A,B){
+        let _a=document.querySelector(A);
+        let _b=document.querySelector(B);
+        data.tagGroups.forEach((x)=>{
+            if(x.id==_b.value){
+                _a.style.color=x.fgcolor;
+                _a.style["background-color"]=x.color;
+            }
+        });
+
+    }
     function revertAssign(){ //restore with last loaded server data
         afterReload(data)
     }
@@ -114,22 +138,22 @@
 <div class="myForm">
 <div><p>Unassigned Tags</p><Search size="sm" autocomplete="on" bind:search/>
     {#each locUnassignedTags as tag, i }
-        <Tag id={tag.id} type={tag.color} style={"background-color:"+tag.color+";"} interactive on:click={(e)=>(assignTags(tag))}>{tag.name}</Tag>
+        <Tag id={tag.id} type={tag.color} style={"background-color:"+tag.color+";color:"+tag.fgcolor+";"} interactive on:click={(e)=>(assignTags(tag))}>{tag.name}</Tag>
     {/each}
 </div></div>
 <div class="myForm">
 <div><p>Assigned Tags</p>
     {#each locAssignedTags as tag, i }
-        <Tag id={tag.id} type={tag.color} style={"background-color:"+tag.color+";"} interactive on:click={(e)=>(assignTags(tag,true))}>{tag.name}</Tag>
+        <Tag id={tag.id} type={tag.color} style={"background-color:"+tag.color+";color:"+tag.fgcolor+";"} interactive on:click={(e)=>(assignTags(tag,true))}>{tag.name}</Tag>
     {/each}
 </div>
 </div>
 <div class="myForm">
 <Form  method="POST" action="?/create">
     <label > create/modify a tag:
-        <TextInput inline="true" labelText="Name" name="id" autocomplete="off"/>
+        <TextInput inline="true" id="tagname" labelText="Name" name="id" autocomplete="off"/>
         <TextInput inline="true" labelText="New-Name" name="newname" autocomplete="off"/>
-        <Select inline="true" labelText="color" name="group">
+        <Select inline="true" id="taggroup" labelText="group" name="group" on:update={(e)=>{updateColorByGroup("#tagname","#taggroup")}}>
             {#each data.tagGroups as group, i}
                 <SelectItem value={group.id} text={group.name} />
             {/each}
@@ -149,6 +173,25 @@
         <input name="id"  autocomplete="off" />
     </label>
 </Form>
+<div class="myForm">
+    <Form  method="POST" action="?/createGroup">
+        <label > create/modify a group: (TODO: delete is not implemented)
+            <TextInput id="groupname" inline="true" labelText="Name" name="name" autocomplete="off"/>
+            <TextInput inline="true" labelText="New-Name" name="newname" autocomplete="off"/>
+            <Select inline="true" id="groupcolor" labelText="color" name="color" on:update={(e)=>{updateColor("#groupname","#groupcolor","#groupfgcolor")}}>
+                {#each RalColors as group, i}
+                    <SelectItem value={group[1]} text={group[2]} style={"background-color:"+group[1]+";color:"+complColor(group[1])+";"} }/>
+                {/each}
+            </Select>
+            <Select inline="true" id="groupfgcolor" labelText="fgcolor" name="fgcolor" on:update={(e)=>{updateColor("#groupname","#groupcolor","#groupfgcolor")}}>
+                {#each RalColors as group, i}
+                    <SelectItem value={group[1]} text={group[2]} style={"background-color:"+group[1]+";color:"+complColor(group[1])+";"} }/>
+                {/each}
+            </Select>
+            <input type="submit" />
+        </label>
+    </Form>
+</div>
 <Form name="assignForm" id="assignForm" method="POST" enctype="multipart/form-data" action="?/assign" on:submit={(e)=>{validateForm(e)}} hidden>
     <input name="idlist" autocomplete="off"/>
 </Form>

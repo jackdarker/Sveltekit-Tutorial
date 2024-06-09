@@ -62,14 +62,25 @@ export class dbHandler {
 		query = `CREATE TABLE IF NOT EXISTS TagGroups (
 			ID	INTEGER PRIMARY KEY AUTOINCREMENT,
 			Name	TEXT,
-			Color	TEXT			
+			Color	TEXT,
+			FGColor	TEXT,
+			Shape	TEXT			
 		)`
 		db.exec(query);
-		this.createTagGroup({name:"aqua",color:"aqua"});
-		this.createTagGroup({name:"gray",color:"gray"});
-		this.createTagGroup({name:"red",color:"red"});
-		this.createTagGroup({name:"blue",color:"blue"});
-		this.createTagGroup({name:"green",color:"green"});
+
+		const stmt = db.prepare('SELECT COUNT(*) AS CNTREC FROM pragma_table_info(?) WHERE name=?');
+		const rows = stmt.all("TagGroups","FGColor");
+		if(rows[0].CNTREC<=0){
+			query = `ALTER TABLE TagGroups ADD FGColor TEXT`
+			db.exec(query);
+			query = `ALTER TABLE TagGroups ADD Shape TEXT`
+			db.exec(query);
+		}
+		this.createTagGroup({name:"aqua",color:"aqua",fgcolor:"white",shape:""});
+		this.createTagGroup({name:"gray",color:"gray",fgcolor:"white",shape:""});
+		this.createTagGroup({name:"red",color:"red",fgcolor:"white",shape:""});
+		this.createTagGroup({name:"blue",color:"blue",fgcolor:"white",shape:""});
+		this.createTagGroup({name:"green",color:"green",fgcolor:"white",shape:""});
 		//this.createTag({Name:'brown'});
 		//query = `INSERT into Boards (boardID,boardName) VALUES ('b','Random')`
 		//db.run(query);
@@ -79,23 +90,24 @@ export class dbHandler {
 		//db.run(query);
 	}
 	createTagGroup(group){
-		const stmt = db.prepare('Update TagGroups SET name=?,Color=? where (name=?)');
-		let info = stmt.run(group.name,group.color,group.name);
+		group.newname = group.newname ||group.name; //this is for namechange
+		const stmt = db.prepare('Update TagGroups SET name=?,Color=?,FGColor=?,Shape=? where (name=?)');
+		let info = stmt.run(group.newname,group.color,group.fgcolor,group.shape,group.name);
 		let rowID=-1;
 		if(info.changes<=0) {
-			const stmt2 = db.prepare('Insert Into TagGroups (name,Color) VALUES(?,?)');
-			const info = stmt2.run(group.name,group.color);
+			const stmt2 = db.prepare('Insert Into TagGroups (name,Color,FGColor,Shape) VALUES(?,?,?,?)');
+			const info = stmt2.run(group.newname,group.color,group.fgcolor,group.shape);
 			rowID = (info.changes<=0)?-1:info.lastInsertRowid;
 		} 
 		return(rowID);
 	}	
 	findTagGroups(){
 		let results = [];
-		const stmt = db.prepare('SELECT ID,Name,Color FROM TagGroups');
+		const stmt = db.prepare('SELECT ID,Name,Color,FGColor,Shape FROM TagGroups');
 		const rows = stmt.all();
 		rows.forEach((row)=>{				
 			//results.push(new Tag(row.ID,row.Name));   classes not compatible with devalue?
-			results.push({ id:row.ID, name: row.Name, color: row.Color});
+			results.push({ id:row.ID, name: row.Name, color: row.Color, fgcolor:row.FGColor, shape:row.Shape});
 		});
 		return(results);
 	}
@@ -127,36 +139,36 @@ export class dbHandler {
 	 */
 	findTags(search){
 		let results = []; //TODO limit rowcount
-		const stmt = db.prepare('SELECT Tags.ID,Tags.Name, TagGroups.ID as GroupID, TagGroups.Color FROM Tags left join TagGroups on Tags.GroupID=TagGroups.ID');
+		const stmt = db.prepare('SELECT Tags.ID,Tags.Name, TagGroups.ID as GroupID, TagGroups.Color, TagGroups.FGColor, TagGroups.Shape FROM Tags left join TagGroups on Tags.GroupID=TagGroups.ID');
 		const rows = stmt.all();
 		rows.forEach((row)=>{				
 			//results.push(new Tag(row.ID,row.Name));   classes not compatible with devalue?
-			results.push({ id:row.ID, name: row.Name, groupid:row.GroupID, color:row.Color});
+			results.push({ id:row.ID, name: row.Name, groupid:row.GroupID, color:row.Color, fgcolor:row.FGColor, shape:row.Shape});
 		});
 		return(results);
 	}
 	findPostTags(postId){
 		let results = [];
-		const stmt = db.prepare('SELECT Tags.ID,Tags.Name, TagGroups.ID as GroupID, TagGroups.Color FROM Tags '+ 
+		const stmt = db.prepare('SELECT Tags.ID,Tags.Name, TagGroups.ID as GroupID, TagGroups.Color, TagGroups.FGColor, TagGroups.Shape FROM Tags '+ 
 			'inner join PostTags on Tags.ID=PostTags.tagId '+
 			'left join TagGroups on Tags.GroupID=TagGroups.ID '+
 			'WHERE PostTags.postID=? ');
 		const rows = stmt.all(postId);
 		rows.forEach((row)=>{				
 			//results.push(new Tag(row.ID,row.Name));   classes not compatible with devalue?
-			results.push({ id:row.ID, name: row.Name, groupid:row.GroupID, color:row.Color});
+			results.push({ id:row.ID, name: row.Name, groupid:row.GroupID, color:row.Color, fgcolor:row.FGColor, shape:row.Shape});
 		});
 		return(results);
 	}
 	getTagStatistic(){
 		let results = [];
-		const stmt = db.prepare('SELECT Tags.ID,max(Tags.Name) as name,count(Tags.ID) as count,max(TagGroups.Color) as color FROM Tags '+
+		const stmt = db.prepare('SELECT Tags.ID,max(Tags.Name) as name,count(Tags.ID) as count,max(TagGroups.Color) as color, max(TagGroups.FGColor) as fgcolor,max(TagGroups.Shape) as shape FROM Tags '+
 			'inner join PostTags on Tags.ID=PostTags.tagId '+
 			'left join TagGroups on Tags.GroupID=TagGroups.ID '+
 			'Group by (Tags.ID) order by count desc ');
 		const rows = stmt.all();
 		rows.forEach((row)=>{				
-			results.push({ id:row.ID, name: row.name, count:row.count, color:row.color});
+			results.push({ id:row.ID, name: row.name, count:row.count, color:row.color, fgcolor:row.fgColor, shape:row.shape});
 		});
 		return(results);
 	}
